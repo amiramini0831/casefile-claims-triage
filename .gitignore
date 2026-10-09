@@ -1,0 +1,41 @@
+# Raw datasets are downloaded separately and never committed.
+data/raw/
+
+# Secrets and machine-specific configuration.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Database dumps and local database files (schema .sql files ARE committed).
+*.dump
+*.sql.gz
+*.sqlite
+*.sqlite3
+*.db
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# Editors, OS and local assistant settings
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

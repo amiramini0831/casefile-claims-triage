@@ -1,0 +1,16 @@
+{
+  "source_file": "insurance_claims.csv",
+  "raw_rows": 1000,
+  "loaded": {
+    "policies": 999,
+    "claims": 999,
+    "total_claim_amount": "52667780"
+  },
+  "rejected": [
+    {
+      "policy_number": 526039,
+      "rule": "negative_umbrella_limit",
+      "detail": "umbrella_limit = -1000000"
+    }
+  ]
+}

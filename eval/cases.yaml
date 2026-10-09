@@ -1,0 +1,378 @@
+# Pre-registered evaluation cases.
+#
+# Written by `python -m casefile.eval.select_cases` before the agents were
+# built. Do not edit by hand: the expected results are computed by
+# casefile.rules, and tests/test_eval_cases.py checks that this file is
+# exactly what that script produces.
+#
+# outcome            what the run must end in
+# reason             the single rule, or the stopping guard, behind it
+# payable_amount     total_claim_amount minus the deductible, when paying
+# reviewer_send_back the reviewer must return the work at least once
+
+version: 1
+seed: 20151009
+rules:
+  frequent_claims_count: 3
+  frequent_claims_window_months: 36
+cases:
+- case_id: C01
+  group: clean
+  claim_id: CLM-2015-00354
+  policy_number: 552618
+  document_defect: null
+  fault_injection: null
+  note: Single Vehicle Collision, Minor Damage, nothing unusual
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '75920'
+    reviewer_send_back: false
+- case_id: C02
+  group: clean
+  claim_id: CLM-2015-00427
+  policy_number: 212674
+  document_defect: null
+  fault_injection: null
+  note: Single Vehicle Collision, Major Damage, nothing unusual
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '53140'
+    reviewer_send_back: false
+- case_id: C03
+  group: clean
+  claim_id: CLM-2015-00341
+  policy_number: 728600
+  document_defect: null
+  fault_injection: null
+  note: Multi-vehicle Collision, Total Loss, nothing unusual
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '67540'
+    reviewer_send_back: false
+- case_id: C04
+  group: clean
+  claim_id: CLM-2015-00709
+  policy_number: 832300
+  document_defect: null
+  fault_injection: null
+  note: Multi-vehicle Collision, Minor Damage, nothing unusual
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '53890'
+    reviewer_send_back: false
+- case_id: C05
+  group: clean
+  claim_id: CLM-2015-00061
+  policy_number: 218684
+  document_defect: null
+  fault_injection: null
+  note: Vehicle Theft, Trivial Damage, nothing unusual
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '5080'
+    reviewer_send_back: false
+- case_id: C06
+  group: clean
+  claim_id: CLM-2015-00270
+  policy_number: 863749
+  document_defect: null
+  fault_injection: null
+  note: Vehicle Theft, Minor Damage, nothing unusual
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '4060'
+    reviewer_send_back: false
+- case_id: C07
+  group: clean
+  claim_id: CLM-2015-00212
+  policy_number: 557218
+  document_defect: null
+  fault_injection: null
+  note: Parked Car, Minor Damage, nothing unusual
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '4670'
+    reviewer_send_back: false
+- case_id: C08
+  group: clean
+  claim_id: CLM-2015-00974
+  policy_number: 354481
+  document_defect: null
+  fault_injection: null
+  note: Parked Car, Trivial Damage, nothing unusual
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '3500'
+    reviewer_send_back: false
+- case_id: C09
+  group: natural
+  claim_id: CLM-2015-00362
+  policy_number: 806081
+  document_defect: null
+  fault_injection: null
+  note: vehicle_claim 69930 is above the reference high of 67590
+  expected:
+    outcome: refer_to_adjuster
+    reason: amount_above_reference
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C10
+  group: natural
+  claim_id: CLM-2015-00535
+  policy_number: 127754
+  document_defect: null
+  fault_injection: null
+  note: vehicle_claim 71520 is above the reference high of 69210
+  expected:
+    outcome: refer_to_adjuster
+    reason: amount_above_reference
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C11
+  group: natural
+  claim_id: CLM-2015-00197
+  policy_number: 796375
+  document_defect: null
+  fault_injection: null
+  note: 3 prior claims in the last 36 months
+  expected:
+    outcome: refer_to_adjuster
+    reason: frequent_prior_claims
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C12
+  group: natural
+  claim_id: CLM-2015-00742
+  policy_number: 589749
+  document_defect: null
+  fault_injection: null
+  note: 3 prior claims in the last 36 months
+  expected:
+    outcome: refer_to_adjuster
+    reason: frequent_prior_claims
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C13
+  group: natural
+  claim_id: CLM-2015-00833
+  policy_number: 190588
+  document_defect: null
+  fault_injection: null
+  note: 3 prior claims in the last 36 months
+  expected:
+    outcome: refer_to_adjuster
+    reason: frequent_prior_claims
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C14
+  group: natural
+  claim_id: CLM-2015-00381
+  policy_number: 266247
+  document_defect: null
+  fault_injection: null
+  note: total_claim_amount 100 does not exceed the deductible of 2000
+  expected:
+    outcome: recommend_deny
+    reason: below_deductible
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C15
+  group: document_defect
+  claim_id: CLM-2015-00011
+  policy_number: 596914
+  document_defect: amount_mismatch
+  fault_injection: null
+  note: repair estimate and claim form state different amounts
+  expected:
+    outcome: refer_to_adjuster
+    reason: document_mismatch
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C16
+  group: document_defect
+  claim_id: CLM-2015-00703
+  policy_number: 512894
+  document_defect: amount_mismatch
+  fault_injection: null
+  note: repair estimate and claim form state different amounts
+  expected:
+    outcome: refer_to_adjuster
+    reason: document_mismatch
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C17
+  group: document_defect
+  claim_id: CLM-2015-00043
+  policy_number: 720356
+  document_defect: date_mismatch
+  fault_injection: null
+  note: police report and claim form state different incident dates
+  expected:
+    outcome: refer_to_adjuster
+    reason: document_mismatch
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C18
+  group: document_defect
+  claim_id: CLM-2015-00127
+  policy_number: 904191
+  document_defect: date_mismatch
+  fault_injection: null
+  note: police report and claim form state different incident dates
+  expected:
+    outcome: refer_to_adjuster
+    reason: document_mismatch
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C19
+  group: document_defect
+  claim_id: CLM-2015-00334
+  policy_number: 516959
+  document_defect: missing_document
+  fault_injection: null
+  note: the repair estimate is missing from the file
+  expected:
+    outcome: refer_to_adjuster
+    reason: missing_document
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C20
+  group: document_defect
+  claim_id: CLM-2015-00645
+  policy_number: 193213
+  document_defect: missing_document
+  fault_injection: null
+  note: the repair estimate is missing from the file
+  expected:
+    outcome: refer_to_adjuster
+    reason: missing_document
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C21
+  group: document_defect
+  claim_id: CLM-2015-00441
+  policy_number: 369226
+  document_defect: wrong_policy_number
+  fault_injection: null
+  note: documents carry a policy number that does not exist
+  expected:
+    outcome: refer_to_adjuster
+    reason: policy_not_found
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C22
+  group: document_defect
+  claim_id: CLM-2015-00665
+  policy_number: 405533
+  document_defect: wrong_policy_number
+  fault_injection: null
+  note: documents carry a policy number that does not exist
+  expected:
+    outcome: refer_to_adjuster
+    reason: policy_not_found
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C23
+  group: document_defect
+  claim_id: CLM-2015-00129
+  policy_number: 947598
+  document_defect: incident_outside_coverage
+  fault_injection: null
+  note: documents date the incident before the policy start
+  expected:
+    outcome: recommend_deny
+    reason: incident_outside_policy_period
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C24
+  group: document_defect
+  claim_id: CLM-2015-00393
+  policy_number: 171183
+  document_defect: incident_outside_coverage
+  fault_injection: null
+  note: documents date the incident before the policy start
+  expected:
+    outcome: recommend_deny
+    reason: incident_outside_policy_period
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C25
+  group: system_stress
+  claim_id: CLM-2015-00239
+  policy_number: 900628
+  document_defect: null
+  fault_injection: extractor_error_first_attempt
+  note: extractor returns a wrong amount once; the reviewer must send it back
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '71930'
+    reviewer_send_back: true
+- case_id: C26
+  group: system_stress
+  claim_id: CLM-2015-00718
+  policy_number: 342830
+  document_defect: null
+  fault_injection: extractor_error_first_attempt
+  note: extractor returns a wrong amount once; the reviewer must send it back
+  expected:
+    outcome: recommend_pay
+    reason: covered
+    payable_amount: '59000'
+    reviewer_send_back: true
+- case_id: C27
+  group: system_stress
+  claim_id: CLM-2015-00769
+  policy_number: 328387
+  document_defect: null
+  fault_injection: reviewer_never_approves
+  note: reviewer keeps sending the work back
+  expected:
+    outcome: escalated
+    reason: max_revisions
+    payable_amount: null
+    reviewer_send_back: true
+- case_id: C28
+  group: system_stress
+  claim_id: CLM-2015-00325
+  policy_number: 964657
+  document_defect: null
+  fault_injection: repeated_schema_errors
+  note: an agent returns invalid output twice in a row
+  expected:
+    outcome: escalated
+    reason: schema_errors
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C29
+  group: system_stress
+  claim_id: CLM-2015-00924
+  policy_number: 268833
+  document_defect: null
+  fault_injection: budget_too_small
+  note: the case budget cannot cover the next model call
+  expected:
+    outcome: escalated
+    reason: budget_exceeded
+    payable_amount: null
+    reviewer_send_back: false
+- case_id: C30
+  group: system_stress
+  claim_id: CLM-2015-00902
+  policy_number: 873859
+  document_defect: null
+  fault_injection: step_limit_too_small
+  note: the step limit is reached before the work is done
+  expected:
+    outcome: escalated
+    reason: max_steps
+    payable_amount: null
+    reviewer_send_back: false

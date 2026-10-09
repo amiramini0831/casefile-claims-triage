@@ -1,0 +1,92 @@
+{
+  "hypothetical": true,
+  "based_on": "vehicle_claim of the loaded claims",
+  "percentiles": {
+    "low": 5,
+    "typical": 50,
+    "high": 95
+  },
+  "min_sample_size": 30,
+  "rows": [
+    {
+      "incident_type": "Single Vehicle Collision",
+      "incident_severity": "Minor Damage",
+      "low_amount": "26040",
+      "typical_amount": "44880",
+      "high_amount": "67590",
+      "sample_size": 136
+    },
+    {
+      "incident_type": "Single Vehicle Collision",
+      "incident_severity": "Major Damage",
+      "low_amount": "29760",
+      "typical_amount": "47360",
+      "high_amount": "69210",
+      "sample_size": 131
+    },
+    {
+      "incident_type": "Single Vehicle Collision",
+      "incident_severity": "Total Loss",
+      "low_amount": "28800",
+      "typical_amount": "46000",
+      "high_amount": "64480",
+      "sample_size": 135
+    },
+    {
+      "incident_type": "Multi-vehicle Collision",
+      "incident_severity": "Minor Damage",
+      "low_amount": "24360",
+      "typical_amount": "43360",
+      "high_amount": "61650",
+      "sample_size": 130
+    },
+    {
+      "incident_type": "Multi-vehicle Collision",
+      "incident_severity": "Major Damage",
+      "low_amount": "29680",
+      "typical_amount": "44320",
+      "high_amount": "58500",
+      "sample_size": 144
+    },
+    {
+      "incident_type": "Multi-vehicle Collision",
+      "incident_severity": "Total Loss",
+      "low_amount": "23100",
+      "typical_amount": "44720",
+      "high_amount": "61760",
+      "sample_size": 145
+    },
+    {
+      "incident_type": "Vehicle Theft",
+      "incident_severity": "Trivial Damage",
+      "low_amount": "2100",
+      "typical_amount": "3850",
+      "high_amount": "5670",
+      "sample_size": 48
+    },
+    {
+      "incident_type": "Vehicle Theft",
+      "incident_severity": "Minor Damage",
+      "low_amount": "1960",
+      "typical_amount": "3920",
+      "high_amount": "6300",
+      "sample_size": 46
+    },
+    {
+      "incident_type": "Parked Car",
+      "incident_severity": "Trivial Damage",
+      "low_amount": "2030",
+      "typical_amount": "3760",
+      "high_amount": "5280",
+      "sample_size": 42
+    },
+    {
+      "incident_type": "Parked Car",
+      "incident_severity": "Minor Damage",
+      "low_amount": "1680",
+      "typical_amount": "3900",
+      "high_amount": "5840",
+      "sample_size": 42
+    }
+  ]
+}
