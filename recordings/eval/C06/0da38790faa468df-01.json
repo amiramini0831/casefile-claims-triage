@@ -1,0 +1,52 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You check two explanations written for a claims adjuster. You are given the facts of a case, two decisions about it and the explanation of each.\n\nSet \"grounded\" to false only if an explanation states a specific value (an amount, a date, a count or a policy number) that contradicts the facts, or that cannot be obtained from the facts by simple arithmetic or by counting. Do not judge whether either decision is correct. Do not object to the two decisions being different from each other. Wording, style and length are not your concern.\n\nWhen \"grounded\" is false, quote the unsupported statement in \"problem\". Otherwise leave \"problem\" empty. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00270\",\n        \"policy_number\": 863749,\n        \"incident_date\": \"2015-01-16\",\n        \"incident_type\": \"Vehicle Theft\",\n        \"incident_severity\": \"Minor Damage\",\n        \"injury_claim\": \"760\",\n        \"property_claim\": \"380\",\n        \"vehicle_claim\": \"3420\",\n        \"total_claim_amount\": \"4560\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 863749,\n        \"total_amount\": \"3420\"\n      },\n      \"police_report\": {\n        \"policy_number\": 863749,\n        \"incident_date\": \"2015-01-16\"\n      }\n    },\n    \"policy\": {\n      \"policy_number\": 863749,\n      \"policy_start_date\": \"1990-06-16\",\n      \"policy_deductible\": 500\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"1998-01-23\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"76890.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"1960.00\",\n      \"typical_amount\": \"3920.00\",\n      \"high_amount\": \"6300.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"4060\"\n  },\n  \"rule_explanation\": \"The fixed rules find the claim covered: the claim form reports policy number 863749 with a total claim amount of 4560, the policy exists with a deductible of 500, and the repair estimate of 3420 matches the vehicle claim of 3420. Applying the deductible of 500 to the total claim amount of 4560 yields the payable amount of 4060.\",\n  \"model_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"4060\"\n  },\n  \"model_explanation\": \"The AI model also finds the claim covered: it relies on the claim form's total claim amount of 4560 under policy 863749, the matching repair estimate of 3420, and the policy deductible of 500. It likewise reaches the payable amount of 4060 after applying the deductible.\"\n}"
+      }
+    ],
+    "max_tokens": 300,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's finding on whether the explanations stick to the facts.",
+      "properties": {
+        "grounded": {
+          "description": "False only if an explanation states an unsupported value",
+          "title": "Grounded",
+          "type": "boolean"
+        },
+        "problem": {
+          "description": "The unsupported statement, quoted; empty when grounded",
+          "title": "Problem",
+          "type": "string"
+        }
+      },
+      "required": [
+        "grounded",
+        "problem"
+      ],
+      "title": "Verdict",
+      "type": "object"
+    },
+    "schema_name": "review",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\"grounded\": true, \"problem\": \"\"}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 826,
+      "completion_tokens": 13,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 0.9655130999999528
+  }
+}

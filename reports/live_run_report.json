@@ -1,0 +1,1423 @@
+{
+  "model": "z-ai/glm-5.3",
+  "agents": "real: extractor, investigator and reviewer backed by the model",
+  "token_ceiling_per_case": 200000,
+  "summary": {
+    "cases": 30,
+    "stopped": 30,
+    "ended_as_pre_registered": 30,
+    "completed": 26,
+    "escalated": 4,
+    "model_reached_the_rules_outcome": 26,
+    "model_matched_outcome_reason_and_amount": 26,
+    "cases_with_a_reviewer_send_back": 4,
+    "invalid_outputs": 2,
+    "tokens": 113844,
+    "most_tokens_in_one_case": 8974,
+    "model_calls": 164
+  },
+  "cases": [
+    {
+      "case_id": "C01",
+      "group": "clean",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "75920",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "75920",
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3967,
+      "model_calls": 6,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "75920"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "75920"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The claim form reports a Single Vehicle Collision on 2015-01-21 with a total claim amount of 76920, and the policy 552618 was in force with a deductible of 1000, so the rules yield a covered payment of 75920.",
+      "model_explanation": "The model likewise finds the claim covered: the claim form and repair estimate both show a vehicle claim of 57690, the police report matches the incident date of 2015-01-21, and applying the policy deductible of 1000 to the total claim amount of 76920 gives 75920."
+    },
+    {
+      "case_id": "C02",
+      "group": "clean",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53140",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53140",
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3832,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53140"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53140"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The claim form reports a Single Vehicle Collision on 2015-01-26 with Major Damage and a total claim amount of 53640, and the repair estimate matches the vehicle claim of 41720. The policy on the claim form, number 212674, was in force with a deductible of 500, so the rules treat the incident as covered.",
+      "model_explanation": "The model relies on the claim form's incident type of Single Vehicle Collision with Major Damage and a total claim amount of 53640, corroborated by the repair estimate of 41720. It also notes the repair cost reference range for this kind of incident, from a low of 29760.00 to a high of 69210.00 with a typical amount of 47360.00, and the active policy 212674 with a 500 deductible, concluding the claim is covered."
+    },
+    {
+      "case_id": "C03",
+      "group": "clean",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "67540",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "67540",
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3302,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "67540"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "67540"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed-rule decision rests on the claim form's total claim amount of 68040 for a Multi-vehicle Collision marked Total Loss, reduced by the policy deductible of 500, yielding a payable amount of 67540. It also relies on the policy 728600 being in force, with a start date of 1980-09-20, and no prior claims on the policy.",
+      "model_explanation": "The AI model's decision rests on the same claim form total of 68040 and the policy deductible of 500, producing a payable amount of 67540. It additionally considers the repair estimate of 45360, which matches the vehicle claim of 45360, and the repair cost reference showing a typical amount of 44720 with a range from 23100.00 to 61760.00."
+    },
+    {
+      "case_id": "C04",
+      "group": "clean",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53890",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53890",
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3660,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53890"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53890"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed rules find the claim covered: the claim form lists policy number 832300 with a total claim amount of 54890, and a matching policy exists with a deductible of 1000, which is subtracted to reach the payable amount. The repair estimate confirms the vehicle claim of 39920.",
+      "model_explanation": "The AI model also finds the claim covered, resting on the claim form's total claim amount of 54890 under policy number 832300 and the policy's deductible of 1000, which yields the same payable amount. The repair estimate of 39920 and the repair cost reference, with a typical amount of 43360, are consistent with the claimed vehicle damage."
+    },
+    {
+      "case_id": "C05",
+      "group": "clean",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "5080",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "5080",
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3252,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "5080"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "5080"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision rests on the claim form's vehicle claim of 5310 and the policy deductible of 2000, yielding a payable amount of 5080. It treats the incident as covered because the claim form reports a Vehicle Theft on 2015-01-05 under policy 218684, which exists and started on 1997-07-05.",
+      "model_explanation": "The model decision rests on the same vehicle claim of 5310 from the claim form and the policy deductible of 2000, producing a payable amount of 5080. It also relies on the repair estimate matching the vehicle claim at 5310 and the repair cost reference placing typical costs at 3850.00 with a high of 5670.00, consistent with the claimed amount."
+    },
+    {
+      "case_id": "C06",
+      "group": "clean",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4060",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4060",
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3770,
+      "model_calls": 6,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4060"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4060"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed rules find the claim covered: the claim form reports policy number 863749 with a total claim amount of 4560, the policy exists with a deductible of 500, and the repair estimate of 3420 matches the vehicle claim of 3420. Applying the deductible of 500 to the total claim amount of 4560 yields the payable amount of 4060.",
+      "model_explanation": "The AI model also finds the claim covered: it relies on the claim form's total claim amount of 4560 under policy 863749, the matching repair estimate of 3420, and the policy deductible of 500. It likewise reaches the payable amount of 4060 after applying the deductible."
+    },
+    {
+      "case_id": "C07",
+      "group": "clean",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4670",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4670",
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 4001,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4670"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4670"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision rests on the claim form's total claim amount of 5170 and the policy deductible of 500, yielding a payable amount of 4670. It treats the incident as covered because the claim form shows a Parked Car incident with Minor Damage on policy 557218.",
+      "model_explanation": "The model decision rests on the same claim form total of 5170 and the policy deductible of 500, producing a payable amount of 4670. It also considers the repair estimate total of 3760, which falls within the repair cost reference range of 1680.00 to 5840.00 with a typical amount of 3900.00."
+    },
+    {
+      "case_id": "C08",
+      "group": "clean",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "3500",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "3500",
+        "reviewer_send_back": true
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 5,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "sent_back",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 5962,
+      "model_calls": 8,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "3500"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "3500"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed-rule decision rests on the claim form's vehicle claim of 3600, the repair estimate's total amount of 3600, and the policy deductible of 1000, with the incident type of Parked Car and severity of Trivial Damage. It also notes the policy has no prior claims and the repair cost reference typical amount of 3760. On these facts it recommends payment as covered.",
+      "model_explanation": "The AI model decision rests on the same facts: the claim form's vehicle claim of 3600, the matching repair estimate total of 3600, the policy deductible of 1000, and the repair cost reference range from 2030.00 to 5280.00 with a typical amount of 3760.00. With no prior claims on the policy and no police report, it recommends payment as covered."
+    },
+    {
+      "case_id": "C09",
+      "group": "natural",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3566,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision rests on the vehicle claim of 69930 on the claim form, which exceeds the high repair cost reference of 67590.00, so the claim is referred to an adjuster for amount_above_reference.",
+      "model_explanation": "The model decision also rests on the vehicle claim of 69930, corroborated by the repair estimate total of 69930, exceeding the high repair cost reference of 67590.00, so it refers the claim to an adjuster for amount_above_reference."
+    },
+    {
+      "case_id": "C10",
+      "group": "natural",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3131,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision refers the claim to an adjuster because the vehicle claim of 71520 exceeds the high end of the usual repair cost range, which is 69210.00. It also relies on the repair estimate, which states a total amount of 71520 for policy 127754.",
+      "model_explanation": "The model decision refers the claim to an adjuster because the vehicle claim of 71520 exceeds the high end of the usual repair cost range, which is 69210.00. It also takes into account the claim form's incident type of Single Vehicle Collision with Major Damage severity."
+    },
+    {
+      "case_id": "C11",
+      "group": "natural",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3969,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed rules refer this claim to an adjuster because the policy has frequent prior claims: five earlier claims on policy 796375, including a Single Vehicle Collision on 2012-02-26 with total_claim_amount 52800.00 and another on 2014-09-29 with total_claim_amount 65250.00.",
+      "model_explanation": "The AI model independently reached the same referral, resting on the same pattern of frequent prior claims on policy 796375, including the Multi-vehicle Collision on 2014-06-23 with total_claim_amount 59700.00 and the Single Vehicle Collision on 2014-09-29 with total_claim_amount 65250.00."
+    },
+    {
+      "case_id": "C12",
+      "group": "natural",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3650,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision refers the claim to an adjuster because the policy has frequent prior claims: three earlier claims on policy 589749, with incident dates 2012-10-27, 2013-07-04, and 2014-10-05.",
+      "model_explanation": "The model decision also refers the claim to an adjuster based on the same pattern of frequent prior claims on policy 589749, citing the three earlier claims dated 2012-10-27, 2013-07-04, and 2014-10-05."
+    },
+    {
+      "case_id": "C13",
+      "group": "natural",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 4426,
+      "model_calls": 6,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed-rule decision refers the claim to an adjuster because the policy has frequent prior claims: five earlier claims are listed on policy 190588, including a 'Single Vehicle Collision' on 2011-08-23 and a 'Vehicle Theft' on 2013-12-27.",
+      "model_explanation": "The AI model also refers the claim to an adjuster for frequent prior claims, resting on the same history of five prior claims on policy 190588, such as the 'Single Vehicle Collision' on 2012-08-06 and the 'Single Vehicle Collision' on 2013-07-25."
+    },
+    {
+      "case_id": "C14",
+      "group": "natural",
+      "document_defect": null,
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_deny",
+        "reason": "below_deductible",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_deny",
+        "reason": "below_deductible",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3499,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "recommend_deny",
+        "reason": "below_deductible",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "recommend_deny",
+        "reason": "below_deductible",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rules compare the claimed amount to the policy deductible: the claim form lists a total claim amount of ",
+      "model_explanation": "The model likewise rests on the total claim amount of "
+    },
+    {
+      "case_id": "C15",
+      "group": "document_defect",
+      "document_defect": "amount_mismatch",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3275,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed rules refer the claim because the documents disagree: the claim form lists a vehicle claim of 45200 while the repair estimate totals 63280, and the estimate exceeds the repair cost reference high amount of 61760.",
+      "model_explanation": "The AI model also refers the claim on the same document mismatch: the claim form's vehicle claim of 45200 does not match the repair estimate's total of 63280, which is above the usual high amount of 61760 for this kind of incident."
+    },
+    {
+      "case_id": "C16",
+      "group": "document_defect",
+      "document_defect": "amount_mismatch",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3806,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed rules refer this claim to an adjuster because of a document mismatch: the claim form lists a vehicle claim of 43330, while the repair estimate for policy 512894 totals 54160.",
+      "model_explanation": "The AI model also refers this claim to an adjuster for a document mismatch, resting on the same discrepancy between the claim form's vehicle claim of 43330 and the repair estimate's total amount of 54160."
+    },
+    {
+      "case_id": "C17",
+      "group": "document_defect",
+      "document_defect": "date_mismatch",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 4161,
+      "model_calls": 6,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed-rule decision refers the claim because of a document mismatch: the claim form gives the incident date as 2015-01-03, while the police report gives the incident date as 2014-12-31 for the same policy number 720356.",
+      "model_explanation": "The AI model's decision also rests on the same document mismatch: the claim form states the incident date as 2015-01-03, but the police report states 2014-12-31, so it refers the claim to an adjuster."
+    },
+    {
+      "case_id": "C18",
+      "group": "document_defect",
+      "document_defect": "date_mismatch",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3899,
+      "model_calls": 6,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision refers the claim to an adjuster because the claim form and the police report disagree on the incident date: the claim form states the incident date as 2015-01-08, while the police report states 2015-01-04.",
+      "model_explanation": "The model decision also refers the claim to an adjuster due to a document mismatch, resting on the same conflicting incident dates: 2015-01-08 on the claim form versus 2015-01-04 on the police report."
+    },
+    {
+      "case_id": "C19",
+      "group": "document_defect",
+      "document_defect": "missing_document",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3377,
+      "model_calls": 4,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule-based decision refers the claim to an adjuster because a required document is missing: the file contains no repair estimate (documents.repair_estimate is null) and no police report (documents.police_report is null), while the claim form reports a total claim amount of 60750 for a Major Damage multi-vehicle collision.",
+      "model_explanation": "The model decision also refers the claim to an adjuster for a missing document, resting on the absence of a repair estimate (documents.repair_estimate is null) despite the claim form listing a vehicle claim of 40500 and a repair cost reference ranging from 29680.00 to 58500.00."
+    },
+    {
+      "case_id": "C20",
+      "group": "document_defect",
+      "document_defect": "missing_document",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3514,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision refers the claim to an adjuster because a required document is missing: the file contains no repair estimate (documents.repair_estimate is null), even though the claim form reports a total claim amount of 68160 with incident severity Total Loss.",
+      "model_explanation": "The model decision also refers the claim to an adjuster for a missing document, resting on the absence of a repair estimate (documents.repair_estimate is null) despite the claim form listing a vehicle claim of 45440 and a total claim amount of 68160."
+    },
+    {
+      "case_id": "C21",
+      "group": "document_defect",
+      "document_defect": "wrong_policy_number",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3076,
+      "model_calls": 6,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule-based decision refers the claim to an adjuster because no policy exists for the policy number on the claim form, which is 493867.",
+      "model_explanation": "The model decision also refers the claim to an adjuster because the policy number on the claim form, 493867, does not match any policy on file."
+    },
+    {
+      "case_id": "C22",
+      "group": "document_defect",
+      "document_defect": "wrong_policy_number",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3146,
+      "model_calls": 6,
+      "rule_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision refers the claim to an adjuster because the policy number on the claim form, 932146, does not match any existing policy in the file (policy is null).",
+      "model_explanation": "The model decision also refers the claim to an adjuster, resting on the same fact that no policy exists for policy number 932146 shown on the claim form, despite the claim form, repair estimate, and police report all citing that same policy number."
+    },
+    {
+      "case_id": "C23",
+      "group": "document_defect",
+      "document_defect": "incident_outside_coverage",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3367,
+      "model_calls": 6,
+      "rule_decision": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision rests on the incident date of 1996-09-11 from the claim form, which falls before the policy start date of 1996-10-08 on policy 947598, so the incident occurred outside the policy period.",
+      "model_explanation": "The model decision rests on the same facts: the claim form reports an incident date of 1996-09-11, while the policy with number 947598 began on 1996-10-08, placing the incident outside the policy period."
+    },
+    {
+      "case_id": "C24",
+      "group": "document_defect",
+      "document_defect": "incident_outside_coverage",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 3209,
+      "model_calls": 5,
+      "rule_decision": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null
+      },
+      "model_decision": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision rests on the claim form's incident date of 2006-10-05 and the policy's start date of 2006-11-24, showing the incident occurred before the policy period began.",
+      "model_explanation": "The model decision rests on the same facts: the claim form's incident date of 2006-10-05 falls before the policy start date of 2006-11-24, placing the incident outside the policy period."
+    },
+    {
+      "case_id": "C25",
+      "group": "system_stress",
+      "document_defect": null,
+      "fault_injection": "extractor_error_first_attempt",
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "71930",
+        "reviewer_send_back": true
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "71930",
+        "reviewer_send_back": true
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 6,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer",
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "sent_back",
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 6353,
+      "model_calls": 9,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "71930"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "71930"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The rule decision rests on the claim form's total claim amount of 72930 and the policy deductible of 1000, yielding a payable amount of 71930. It treats the incident as covered because the claim form cites policy 900628, which exists with a start date of 1987-12-14, before the incident date of 2015-01-14.",
+      "model_explanation": "The model decision rests on the same claim form total of 72930 and the policy deductible of 1000, producing a payable amount of 71930. It also finds coverage based on the matching policy 900628, in force since 1987-12-14, covering the incident dated 2015-01-14."
+    },
+    {
+      "case_id": "C26",
+      "group": "system_stress",
+      "document_defect": null,
+      "fault_injection": "extractor_error_first_attempt",
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "59000",
+        "reviewer_send_back": true
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "59000",
+        "reviewer_send_back": true
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "completed",
+      "steps": 6,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer",
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "sent_back",
+        "extracted",
+        "recommended",
+        "approved"
+      ],
+      "tokens": 6580,
+      "model_calls": 9,
+      "rule_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "59000"
+      },
+      "model_decision": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "59000"
+      },
+      "outcomes_agree": true,
+      "decisions_agree": true,
+      "rule_explanation": "The fixed-rule decision rests on the claim form's total claim amount of 60000 and the policy deductible of 1000, yielding a payable amount of 59000. It treats the incident as covered because the claim form cites policy 342830, which exists with a start date of 2009-10-13, before the incident date of 2015-02-13.",
+      "model_explanation": "The AI model's decision rests on the same claim form total of 60000 minus the policy deductible of 1000, giving 59000. It also considers the repair estimate of 45000, which falls within the repair cost reference range of 24360.00 to 61650.00, supporting the vehicle claim of 45000 as consistent with the stated incident severity of Minor Damage."
+    },
+    {
+      "case_id": "C27",
+      "group": "system_stress",
+      "document_defect": null,
+      "fault_injection": "reviewer_never_approves",
+      "expected": {
+        "outcome": "escalated",
+        "reason": "max_revisions",
+        "payable_amount": null,
+        "reviewer_send_back": true
+      },
+      "observed": {
+        "outcome": "escalated",
+        "reason": "max_revisions",
+        "payable_amount": null,
+        "reviewer_send_back": true
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "escalated",
+      "steps": 9,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer",
+        "investigator",
+        "reviewer",
+        "investigator",
+        "reviewer",
+        "investigator",
+        "reviewer"
+      ],
+      "events": [
+        "extracted",
+        "recommended",
+        "sent_back",
+        "recommended",
+        "sent_back",
+        "recommended",
+        "sent_back",
+        "recommended",
+        "sent_back"
+      ],
+      "tokens": 8974,
+      "model_calls": 10
+    },
+    {
+      "case_id": "C28",
+      "group": "system_stress",
+      "document_defect": null,
+      "fault_injection": "repeated_schema_errors",
+      "expected": {
+        "outcome": "escalated",
+        "reason": "schema_errors",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "escalated",
+        "reason": "schema_errors",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "escalated",
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "investigator"
+      ],
+      "events": [
+        "extracted",
+        "invalid_output",
+        "invalid_output"
+      ],
+      "tokens": 703,
+      "model_calls": 2
+    },
+    {
+      "case_id": "C29",
+      "group": "system_stress",
+      "document_defect": null,
+      "fault_injection": "budget_too_small",
+      "expected": {
+        "outcome": "escalated",
+        "reason": "budget_exceeded",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "escalated",
+        "reason": "budget_exceeded",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "escalated",
+      "steps": 0,
+      "path": [],
+      "events": [],
+      "tokens": 0,
+      "model_calls": 0
+    },
+    {
+      "case_id": "C30",
+      "group": "system_stress",
+      "document_defect": null,
+      "fault_injection": "step_limit_too_small",
+      "expected": {
+        "outcome": "escalated",
+        "reason": "max_steps",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "escalated",
+        "reason": "max_steps",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "matched": true,
+      "mismatches": [],
+      "status": "escalated",
+      "steps": 2,
+      "path": [
+        "extractor",
+        "investigator"
+      ],
+      "events": [
+        "extracted",
+        "recommended"
+      ],
+      "tokens": 2417,
+      "model_calls": 4
+    }
+  ]
+}

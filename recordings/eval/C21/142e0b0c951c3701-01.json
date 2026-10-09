@@ -1,0 +1,53 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read one insurance document and report the requested fields exactly as the document states them. Do not correct, complete or infer values. Write dates as YYYY-MM-DD and amounts as plain numbers without currency symbols or thousands separators. Answer with JSON only."
+      },
+      {
+        "role": "user",
+        "content": "This is the text of a police incident report. Report its fields.\n\nNorthbend Police Department\nIncident Report\nReport number: PR-351606\nReport date: Jan 28, 2015\nIncident\nDate of incident: Jan 27, 2015\nTime of incident: 00:00\nLocation: 4431 Rock St, Northbend, NC\nType of incident: Parked Car\nType of collision: Not applicable\nVehicles involved: 1\nWitnesses: 3\nDriver and vehicle\nDriver: Brian Graham\nVehicle: 2011 Chevrolet Tahoe\nInsurance policy number: 493867\nNarrative\nThe insured vehicle was struck while parked and unattended at 4431 Rock St, Northbend. The other party did not remain at\nthe scene. The incident occurred at approximately 00:00."
+      }
+    ],
+    "max_tokens": 400,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What the police report states.",
+      "properties": {
+        "policy_number": {
+          "description": "Insurance policy number printed on this report",
+          "title": "Policy Number",
+          "type": "integer"
+        },
+        "incident_date": {
+          "description": "Date of the incident, not the date of the report",
+          "format": "date",
+          "title": "Incident Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_number",
+        "incident_date"
+      ],
+      "title": "PoliceReportFields",
+      "type": "object"
+    },
+    "schema_name": "police_report",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"policy_number\": 493867,\n  \"incident_date\": \"2015-01-27\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 247,
+      "completion_tokens": 30,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 1.4988850000008824
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read one insurance document and report the requested fields exactly as the document states them. Do not correct, complete or infer values. Write dates as YYYY-MM-DD and amounts as plain numbers without currency symbols or thousands separators. Answer with JSON only."
+      },
+      {
+        "role": "user",
+        "content": "This is the text of a automobile claim form. Report its fields.\n\nCasefile Mutual Insurance\nAutomobile Claim Form\nClaim number: CLM-2015-00742\nDate filed: February 18, 2015\nPolicyholder\nName: Andrew Carter\nAge: 38\nPolicy number: 589749\nPolicy state: IN\nInsured vehicle\nVehicle: 2013 Subaru Legacy\nIncident\nDate of incident: February 14, 2015\nTime of incident: 17:00\nType of incident: Multi-vehicle Collision\nType of collision: Front Collision\nSeverity of damage: Total Loss\nLocation: 3770 Flute Drive, Springfield, WV\nAuthorities contacted: Ambulance\nVehicles involved: 3\nWitnesses: 0\nPolice report available: Not stated\nDescription\nThe insured vehicle was involved in a collision with 2 other vehicles at 3770 Flute Drive, Springfield. The impact was to the\nfront of the vehicle. The incident occurred at approximately 17:00.\nAmount claimed (USD)\nItem Amount\nInjury 13,040.00\nProperty 13,040.00\nVehicle 52,160.00\nTotal claimed 78,240.00"
+      }
+    ],
+    "max_tokens": 400,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What the claim form states.",
+      "properties": {
+        "claim_number": {
+          "description": "Claim number, exactly as printed",
+          "title": "Claim Number",
+          "type": "string"
+        },
+        "policy_number": {
+          "description": "Policy number printed on this form",
+          "title": "Policy Number",
+          "type": "integer"
+        },
+        "incident_date": {
+          "description": "Date of the incident, not the date the form was filed",
+          "format": "date",
+          "title": "Incident Date",
+          "type": "string"
+        },
+        "incident_type": {
+          "description": "Type of incident",
+          "enum": [
+            "Single Vehicle Collision",
+            "Multi-vehicle Collision",
+            "Vehicle Theft",
+            "Parked Car"
+          ],
+          "title": "Incident Type",
+          "type": "string"
+        },
+        "incident_severity": {
+          "description": "Severity of damage",
+          "enum": [
+            "Trivial Damage",
+            "Minor Damage",
+            "Major Damage",
+            "Total Loss"
+          ],
+          "title": "Incident Severity",
+          "type": "string"
+        },
+        "injury_claim": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Amount claimed for injury, in USD",
+          "title": "Injury Claim"
+        },
+        "property_claim": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Amount claimed for property, in USD",
+          "title": "Property Claim"
+        },
+        "vehicle_claim": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Amount claimed for the vehicle, in USD",
+          "title": "Vehicle Claim"
+        },
+        "total_claim_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Total amount claimed, in USD",
+          "title": "Total Claim Amount"
+        }
+      },
+      "required": [
+        "claim_number",
+        "policy_number",
+        "incident_date",
+        "incident_type",
+        "incident_severity",
+        "injury_claim",
+        "property_claim",
+        "vehicle_claim",
+        "total_claim_amount"
+      ],
+      "title": "ClaimFormFields",
+      "type": "object"
+    },
+    "schema_name": "claim_form",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"claim_number\": \"CLM-2015-00742\",\n  \"policy_number\": 589749,\n  \"incident_date\": \"2015-02-14\",\n  \"incident_type\": \"Multi-vehicle Collision\",\n  \"incident_severity\": \"Total Loss\",\n  \"injury_claim\": 13040.00,\n  \"property_claim\": 13040.00,\n  \"vehicle_claim\": 52160.00,\n  \"total_claim_amount\": 78240.00\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 325,
+      "completion_tokens": 112,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 2.028080399999453
+  }
+}

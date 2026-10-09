@@ -1,0 +1,54 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You write two short explanations for a claims adjuster who must choose between two decisions on the same claim. One decision was produced by fixed rules, the other by an AI model working independently on the same facts. For each decision, say in one to three sentences which facts it rests on, quoting the values. Do not say which decision is better. Do not state any amount, date, count or number that is not in the input. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00127\",\n        \"policy_number\": 904191,\n        \"incident_date\": \"2015-01-08\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"incident_severity\": \"Total Loss\",\n        \"injury_claim\": \"9780\",\n        \"property_claim\": \"9780\",\n        \"vehicle_claim\": \"44010\",\n        \"total_claim_amount\": \"63570\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 904191,\n        \"total_amount\": \"44010\"\n      },\n      \"police_report\": {\n        \"policy_number\": 904191,\n        \"incident_date\": \"2015-01-04\"\n      }\n    },\n    \"policy\": {\n      \"policy_number\": 904191,\n      \"policy_start_date\": \"2006-05-08\",\n      \"policy_deductible\": 500\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"2007-06-25\",\n        \"incident_type\": \"Vehicle Theft\",\n        \"total_claim_amount\": \"3690.00\"\n      },\n      {\n        \"incident_date\": \"2009-07-30\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"57700.00\"\n      },\n      {\n        \"incident_date\": \"2010-07-04\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"64350.00\"\n      },\n      {\n        \"incident_date\": \"2013-10-11\",\n        \"incident_type\": \"Parked Car\",\n        \"total_claim_amount\": \"6400.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"23100.00\",\n      \"typical_amount\": \"44720.00\",\n      \"high_amount\": \"61760.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"refer_to_adjuster\",\n    \"reason\": \"document_mismatch\",\n    \"payable_amount\": null\n  },\n  \"model_decision\": {\n    \"outcome\": \"refer_to_adjuster\",\n    \"reason\": \"document_mismatch\",\n    \"payable_amount\": null\n  }\n}"
+      }
+    ],
+    "max_tokens": 600,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's explanation of each of the two decisions.",
+      "properties": {
+        "rule_explanation": {
+          "description": "Why the fixed rules reached their decision",
+          "minLength": 1,
+          "title": "Rule Explanation",
+          "type": "string"
+        },
+        "model_explanation": {
+          "description": "Why the AI model reached its decision",
+          "minLength": 1,
+          "title": "Model Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_explanation",
+        "model_explanation"
+      ],
+      "title": "Explanations",
+      "type": "object"
+    },
+    "schema_name": "explanations",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"rule_explanation\": \"The rule decision refers the claim to an adjuster because the claim form and the police report disagree on the incident date: the claim form states the incident date as 2015-01-08, while the police report states 2015-01-04.\",\n  \"model_explanation\": \"The model decision also refers the claim to an adjuster due to a document mismatch, resting on the same conflicting incident dates: 2015-01-08 on the claim form versus 2015-01-04 on the police report.\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 738,
+      "completion_tokens": 120,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 23.785396300001594
+  }
+}

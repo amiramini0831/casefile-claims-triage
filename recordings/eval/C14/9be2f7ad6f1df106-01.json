@@ -1,0 +1,135 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read one insurance document and report the requested fields exactly as the document states them. Do not correct, complete or infer values. Write dates as YYYY-MM-DD and amounts as plain numbers without currency symbols or thousands separators. Answer with JSON only."
+      },
+      {
+        "role": "user",
+        "content": "This is the text of a automobile claim form. Report its fields.\n\nCasefile Mutual Insurance\nAutomobile Claim Form\nClaim number: CLM-2015-00381\nDate filed: January 27, 2015\nPolicyholder\nName: Angela Anderson\nAge: 32\nPolicy number: 266247\nPolicy state: IN\nInsured vehicle\nVehicle: 2002 Audi A3\nIncident\nDate of incident: January 23, 2015\nTime of incident: 05:00\nType of incident: Parked Car\nType of collision: Not applicable\nSeverity of damage: Trivial Damage\nLocation: 8492 Weaver Hwy, Northbrook, WV\nAuthorities contacted: Police\nVehicles involved: 1\nWitnesses: 2\nPolice report available: Not stated\nDescription\nThe insured vehicle was struck while parked and unattended at 8492 Weaver Hwy, Northbrook. The other party did not\nremain at the scene. The incident occurred at approximately 05:00.\nAmount claimed (USD)\nItem Amount\nInjury 10.00\nProperty 20.00\nVehicle 70.00\nTotal claimed 100.00"
+      }
+    ],
+    "max_tokens": 400,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What the claim form states.",
+      "properties": {
+        "claim_number": {
+          "description": "Claim number, exactly as printed",
+          "title": "Claim Number",
+          "type": "string"
+        },
+        "policy_number": {
+          "description": "Policy number printed on this form",
+          "title": "Policy Number",
+          "type": "integer"
+        },
+        "incident_date": {
+          "description": "Date of the incident, not the date the form was filed",
+          "format": "date",
+          "title": "Incident Date",
+          "type": "string"
+        },
+        "incident_type": {
+          "description": "Type of incident",
+          "enum": [
+            "Single Vehicle Collision",
+            "Multi-vehicle Collision",
+            "Vehicle Theft",
+            "Parked Car"
+          ],
+          "title": "Incident Type",
+          "type": "string"
+        },
+        "incident_severity": {
+          "description": "Severity of damage",
+          "enum": [
+            "Trivial Damage",
+            "Minor Damage",
+            "Major Damage",
+            "Total Loss"
+          ],
+          "title": "Incident Severity",
+          "type": "string"
+        },
+        "injury_claim": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Amount claimed for injury, in USD",
+          "title": "Injury Claim"
+        },
+        "property_claim": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Amount claimed for property, in USD",
+          "title": "Property Claim"
+        },
+        "vehicle_claim": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Amount claimed for the vehicle, in USD",
+          "title": "Vehicle Claim"
+        },
+        "total_claim_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Total amount claimed, in USD",
+          "title": "Total Claim Amount"
+        }
+      },
+      "required": [
+        "claim_number",
+        "policy_number",
+        "incident_date",
+        "incident_type",
+        "incident_severity",
+        "injury_claim",
+        "property_claim",
+        "vehicle_claim",
+        "total_claim_amount"
+      ],
+      "title": "ClaimFormFields",
+      "type": "object"
+    },
+    "schema_name": "claim_form",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"claim_number\": \"CLM-2015-00381\",\n  \"policy_number\": 266247,\n  \"incident_date\": \"2015-01-23\",\n  \"incident_type\": \"Parked Car\",\n  \"incident_severity\": \"Trivial Damage\",\n  \"injury_claim\": 10.00,\n  \"property_claim\": 20.00,\n  \"vehicle_claim\": 70.00,\n  \"total_claim_amount\": 100.00\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 313,
+      "completion_tokens": 108,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 1.6789734000012686
+  }
+}

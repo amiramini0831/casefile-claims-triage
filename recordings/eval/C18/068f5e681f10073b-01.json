@@ -1,0 +1,53 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read one insurance document and report the requested fields exactly as the document states them. Do not correct, complete or infer values. Write dates as YYYY-MM-DD and amounts as plain numbers without currency symbols or thousands separators. Answer with JSON only."
+      },
+      {
+        "role": "user",
+        "content": "This is the text of a police incident report. Report its fields.\n\nRiverwood Police Department\nIncident Report\nReport number: PR-278321\nReport date: Jan 5, 2015\nIncident\nDate of incident: Jan 4, 2015\nTime of incident: 23:00\nLocation: 7582 Pine Drive, Riverwood, NY\nType of incident: Multi-vehicle Collision\nType of collision: Rear Collision\nVehicles involved: 3\nWitnesses: 3\nDriver and vehicle\nDriver: Brian Quinn\nVehicle: 2006 Volkswagen Jetta\nInsurance policy number: 904191\nNarrative\nThe insured vehicle was involved in a collision with 2 other vehicles at 7582 Pine Drive, Riverwood. The impact was to the\nrear of the vehicle. The incident occurred at approximately 23:00."
+      }
+    ],
+    "max_tokens": 400,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What the police report states.",
+      "properties": {
+        "policy_number": {
+          "description": "Insurance policy number printed on this report",
+          "title": "Policy Number",
+          "type": "integer"
+        },
+        "incident_date": {
+          "description": "Date of the incident, not the date of the report",
+          "format": "date",
+          "title": "Incident Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_number",
+        "incident_date"
+      ],
+      "title": "PoliceReportFields",
+      "type": "object"
+    },
+    "schema_name": "police_report",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"policy_number\": 904191,\n  \"incident_date\": \"2015-01-04\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 249,
+      "completion_tokens": 30,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 7.312090200000966
+  }
+}

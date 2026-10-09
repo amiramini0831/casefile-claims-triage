@@ -1,0 +1,54 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You write two short explanations for a claims adjuster who must choose between two decisions on the same claim. One decision was produced by fixed rules, the other by an AI model working independently on the same facts. For each decision, say in one to three sentences which facts it rests on, quoting the values. Do not say which decision is better. Do not state any amount, date, count or number that is not in the input. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00381\",\n        \"policy_number\": 266247,\n        \"incident_date\": \"2015-01-23\",\n        \"incident_type\": \"Parked Car\",\n        \"incident_severity\": \"Trivial Damage\",\n        \"injury_claim\": \"10\",\n        \"property_claim\": \"20\",\n        \"vehicle_claim\": \"70\",\n        \"total_claim_amount\": \"100\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 266247,\n        \"total_amount\": \"70\"\n      },\n      \"police_report\": null\n    },\n    \"policy\": {\n      \"policy_number\": 266247,\n      \"policy_start_date\": \"2007-08-23\",\n      \"policy_deductible\": 2000\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"2009-10-27\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"47790.00\"\n      },\n      {\n        \"incident_date\": \"2013-08-25\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"81070.00\"\n      },\n      {\n        \"incident_date\": \"2014-02-26\",\n        \"incident_type\": \"Parked Car\",\n        \"total_claim_amount\": \"5940.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"2030.00\",\n      \"typical_amount\": \"3760.00\",\n      \"high_amount\": \"5280.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_deny\",\n    \"reason\": \"below_deductible\",\n    \"payable_amount\": null\n  },\n  \"model_decision\": {\n    \"outcome\": \"recommend_deny\",\n    \"reason\": \"below_deductible\",\n    \"payable_amount\": null\n  }\n}"
+      }
+    ],
+    "max_tokens": 600,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's explanation of each of the two decisions.",
+      "properties": {
+        "rule_explanation": {
+          "description": "Why the fixed rules reached their decision",
+          "minLength": 1,
+          "title": "Rule Explanation",
+          "type": "string"
+        },
+        "model_explanation": {
+          "description": "Why the AI model reached its decision",
+          "minLength": 1,
+          "title": "Model Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_explanation",
+        "model_explanation"
+      ],
+      "title": "Explanations",
+      "type": "object"
+    },
+    "schema_name": "explanations",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"rule_explanation\": \"The rules compare the claimed amount to the policy deductible: the claim form lists a total claim amount of \"   ,  \"model_explanation\": \"The model likewise rests on the total claim amount of \"  }",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 668,
+      "completion_tokens": 56,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 2.6323644000003696
+  }
+}

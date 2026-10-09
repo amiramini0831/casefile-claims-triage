@@ -1,0 +1,135 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read one insurance document and report the requested fields exactly as the document states them. Do not correct, complete or infer values. Write dates as YYYY-MM-DD and amounts as plain numbers without currency symbols or thousands separators. Answer with JSON only."
+      },
+      {
+        "role": "user",
+        "content": "This is the text of a automobile claim form. Report its fields.\n\nCasefile Mutual Insurance\nAutomobile Claim Form\nClaim number: CLM-2015-00427\nDate filed: January 30, 2015\nPolicyholder\nName: Brian Hayes\nAge: 61\nPolicy number: 212674\nPolicy state: OH\nInsured vehicle\nVehicle: 2004 Nissan Maxima\nIncident\nDate of incident: January 26, 2015\nTime of incident: 21:00\nType of incident: Single Vehicle Collision\nType of collision: Side Collision\nSeverity of damage: Major Damage\nLocation: 8821 Elm St, Riverwood, OH\nAuthorities contacted: Fire\nVehicles involved: 1\nWitnesses: 3\nPolice report available: No\nDescription\nThe insured vehicle left the roadway and struck a fixed object at 8821 Elm St, Riverwood. The impact was to the side of the\nvehicle. The incident occurred at approximately 21:00.\nAmount claimed (USD)\nItem Amount\nInjury 5,960.00\nProperty 5,960.00\nVehicle 41,720.00\nTotal claimed 53,640.00"
+      }
+    ],
+    "max_tokens": 400,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What the claim form states.",
+      "properties": {
+        "claim_number": {
+          "description": "Claim number, exactly as printed",
+          "title": "Claim Number",
+          "type": "string"
+        },
+        "policy_number": {
+          "description": "Policy number printed on this form",
+          "title": "Policy Number",
+          "type": "integer"
+        },
+        "incident_date": {
+          "description": "Date of the incident, not the date the form was filed",
+          "format": "date",
+          "title": "Incident Date",
+          "type": "string"
+        },
+        "incident_type": {
+          "description": "Type of incident",
+          "enum": [
+            "Single Vehicle Collision",
+            "Multi-vehicle Collision",
+            "Vehicle Theft",
+            "Parked Car"
+          ],
+          "title": "Incident Type",
+          "type": "string"
+        },
+        "incident_severity": {
+          "description": "Severity of damage",
+          "enum": [
+            "Trivial Damage",
+            "Minor Damage",
+            "Major Damage",
+            "Total Loss"
+          ],
+          "title": "Incident Severity",
+          "type": "string"
+        },
+        "injury_claim": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Amount claimed for injury, in USD",
+          "title": "Injury Claim"
+        },
+        "property_claim": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Amount claimed for property, in USD",
+          "title": "Property Claim"
+        },
+        "vehicle_claim": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Amount claimed for the vehicle, in USD",
+          "title": "Vehicle Claim"
+        },
+        "total_claim_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Total amount claimed, in USD",
+          "title": "Total Claim Amount"
+        }
+      },
+      "required": [
+        "claim_number",
+        "policy_number",
+        "incident_date",
+        "incident_type",
+        "incident_severity",
+        "injury_claim",
+        "property_claim",
+        "vehicle_claim",
+        "total_claim_amount"
+      ],
+      "title": "ClaimFormFields",
+      "type": "object"
+    },
+    "schema_name": "claim_form",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"claim_number\": \"CLM-2015-00427\",\n  \"policy_number\": 212674,\n  \"incident_date\": \"2015-01-26\",\n  \"incident_type\": \"Single Vehicle Collision\",\n  \"incident_severity\": \"Major Damage\",\n  \"injury_claim\": 5960.00,\n  \"property_claim\": 5960.00,\n  \"vehicle_claim\": 41720.00,\n  \"total_claim_amount\": 53640.00\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 322,
+      "completion_tokens": 113,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 2.2085866999987047
+  }
+}

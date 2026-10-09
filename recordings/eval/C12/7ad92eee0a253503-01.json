@@ -1,0 +1,59 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read one insurance document and report the requested fields exactly as the document states them. Do not correct, complete or infer values. Write dates as YYYY-MM-DD and amounts as plain numbers without currency symbols or thousands separators. Answer with JSON only."
+      },
+      {
+        "role": "user",
+        "content": "This is the text of a vehicle repair estimate. Report its fields.\n\nSummit Collision Center\nVehicle Repair Estimate\nEstimate number: EST-915378\nEstimate date: 2015-02-17\nCustomer: Andrew Carter\nVehicle: 2013 Subaru Legacy\nInsurer: Casefile Mutual Insurance\nClaim number: CLM-2015-00742\nPolicy number: 589749\nEstimated cost of repair (USD)\nDescription Type Amount\nFront bumper assembly Parts 6,316.00\nHood panel Parts 11,307.00\nAirbag module Parts 5,476.00\nHeadlamp assembly Parts 10,582.00\nBody labor Labor 6,899.00\nPaint and materials Paint 11,580.00\nEstimate total 52,160.00\nThis estimate is based on a visual inspection. Hidden damage found during repair may change the final cost."
+      }
+    ],
+    "max_tokens": 400,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What the repair estimate states.",
+      "properties": {
+        "policy_number": {
+          "description": "Policy number printed on this estimate",
+          "title": "Policy Number",
+          "type": "integer"
+        },
+        "total_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Estimate total in USD, not the amount of a single line",
+          "title": "Total Amount"
+        }
+      },
+      "required": [
+        "policy_number",
+        "total_amount"
+      ],
+      "title": "RepairEstimateFields",
+      "type": "object"
+    },
+    "schema_name": "repair_estimate",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"policy_number\": 589749,\n  \"total_amount\": 52160.00\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 262,
+      "completion_tokens": 27,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 1.499363800001447
+  }
+}

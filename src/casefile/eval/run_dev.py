@@ -158,6 +158,13 @@ def run_dev(
     }
 
 
+def recorded_model_name() -> str:
+    """Return the model named in the development recordings, if there are any."""
+    for path in sorted(DEV_RECORDINGS.glob("*/*.json")):
+        return json.loads(path.read_text(encoding="utf-8")).get("model", "")
+    return ""
+
+
 def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -182,12 +189,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             settings = load_llm_settings()
             client = OpenAICompatibleClient(settings)
             model_name = settings.model
-        engine = create_domain_engine("agent")
-        with engine.connect() as connection:
-            report = run_dev(
-                args.mode, client, model_name, SqlDomainLookup(connection), portfolio
-            )
-        engine.dispose()
+        if args.mode == "replay":
+            # A replay needs no database: the same lookups are answered from
+            # the raw files, and the requests come out as the same text.
+            model_name = recorded_model_name()
+            report = run_dev(args.mode, None, model_name, portfolio, portfolio)
+        else:
+            engine = create_domain_engine("agent")
+            with engine.connect() as connection:
+                lookup = SqlDomainLookup(connection)
+                report = run_dev(args.mode, client, model_name, lookup, portfolio)
+            engine.dispose()
     except (
         ConfigurationError,
         LLMError,

@@ -1,0 +1,54 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You write two short explanations for a claims adjuster who must choose between two decisions on the same claim. One decision was produced by fixed rules, the other by an AI model working independently on the same facts. For each decision, say in one to three sentences which facts it rests on, quoting the values. Do not say which decision is better. Do not state any amount, date, count or number that is not in the input. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00239\",\n        \"policy_number\": 900628,\n        \"incident_date\": \"2015-01-14\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"incident_severity\": \"Major Damage\",\n        \"injury_claim\": \"6630\",\n        \"property_claim\": \"6630\",\n        \"vehicle_claim\": \"59670\",\n        \"total_claim_amount\": \"72930\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 900628,\n        \"total_amount\": \"59670\"\n      },\n      \"police_report\": null\n    },\n    \"policy\": {\n      \"policy_number\": 900628,\n      \"policy_start_date\": \"1987-12-14\",\n      \"policy_deductible\": 1000\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"2014-09-25\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"63720.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"29760.00\",\n      \"typical_amount\": \"47360.00\",\n      \"high_amount\": \"69210.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"71930\"\n  },\n  \"model_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"71930\"\n  }\n}"
+      }
+    ],
+    "max_tokens": 600,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's explanation of each of the two decisions.",
+      "properties": {
+        "rule_explanation": {
+          "description": "Why the fixed rules reached their decision",
+          "minLength": 1,
+          "title": "Rule Explanation",
+          "type": "string"
+        },
+        "model_explanation": {
+          "description": "Why the AI model reached its decision",
+          "minLength": 1,
+          "title": "Model Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_explanation",
+        "model_explanation"
+      ],
+      "title": "Explanations",
+      "type": "object"
+    },
+    "schema_name": "explanations",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"rule_explanation\": \"The rule decision rests on the claim form's total claim amount of 72930 and the policy deductible of 1000, yielding a payable amount of 71930. It treats the incident as covered because the claim form cites policy 900628, which exists with a start date of 1987-12-14, before the incident date of 2015-01-14.\",\n  \"model_explanation\": \"The model decision rests on the same claim form total of 72930 and the policy deductible of 1000, producing a payable amount of 71930. It also finds coverage based on the matching policy 900628, in force since 1987-12-14, covering the incident dated 2015-01-14.\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 591,
+      "completion_tokens": 179,
+      "reasoning_tokens": 14
+    },
+    "latency_seconds": 6.039448400002584
+  }
+}

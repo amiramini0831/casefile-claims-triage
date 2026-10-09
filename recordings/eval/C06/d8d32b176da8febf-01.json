@@ -1,0 +1,53 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read one insurance document and report the requested fields exactly as the document states them. Do not correct, complete or infer values. Write dates as YYYY-MM-DD and amounts as plain numbers without currency symbols or thousands separators. Answer with JSON only."
+      },
+      {
+        "role": "user",
+        "content": "This is the text of a police incident report. Report its fields.\n\nArlington Police Department\nIncident Report\nReport number: PR-374023\nReport date: Jan 17, 2015\nIncident\nDate of incident: Jan 16, 2015\nTime of incident: 10:00\nLocation: 1941 5th Ridge, Arlington, VA\nType of incident: Vehicle Theft\nType of collision: Not applicable\nVehicles involved: 1\nWitnesses: 3\nDriver and vehicle\nDriver: Susan Anderson\nVehicle: 2007 Nissan Pathfinder\nInsurance policy number: 863749\nNarrative\nThe insured vehicle was reported stolen from 1941 5th Ridge, Arlington. It was later recovered with damage. The incident\noccurred at approximately 10:00."
+      }
+    ],
+    "max_tokens": 400,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What the police report states.",
+      "properties": {
+        "policy_number": {
+          "description": "Insurance policy number printed on this report",
+          "title": "Policy Number",
+          "type": "integer"
+        },
+        "incident_date": {
+          "description": "Date of the incident, not the date of the report",
+          "format": "date",
+          "title": "Incident Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_number",
+        "incident_date"
+      ],
+      "title": "PoliceReportFields",
+      "type": "object"
+    },
+    "schema_name": "police_report",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"policy_number\": 863749,\n  \"incident_date\": \"2015-01-16\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 240,
+      "completion_tokens": 30,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 1.134782199998881
+  }
+}

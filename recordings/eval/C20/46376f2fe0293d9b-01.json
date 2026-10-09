@@ -1,0 +1,52 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You check two explanations written for a claims adjuster. You are given the facts of a case, two decisions about it and the explanation of each.\n\nSet \"grounded\" to false only if an explanation states a specific value (an amount, a date, a count or a policy number) that contradicts the facts, or that cannot be obtained from the facts by simple arithmetic or by counting. Do not judge whether either decision is correct. Do not object to the two decisions being different from each other. Wording, style and length are not your concern.\n\nWhen \"grounded\" is false, quote the unsupported statement in \"problem\". Otherwise leave \"problem\" empty. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00645\",\n        \"policy_number\": 193213,\n        \"incident_date\": \"2015-02-08\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"incident_severity\": \"Total Loss\",\n        \"injury_claim\": \"11360\",\n        \"property_claim\": \"11360\",\n        \"vehicle_claim\": \"45440\",\n        \"total_claim_amount\": \"68160\"\n      },\n      \"repair_estimate\": null,\n      \"police_report\": {\n        \"policy_number\": 193213,\n        \"incident_date\": \"2015-02-08\"\n      }\n    },\n    \"policy\": {\n      \"policy_number\": 193213,\n      \"policy_start_date\": \"1981-03-08\",\n      \"policy_deductible\": 1000\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"1988-06-08\",\n        \"incident_type\": \"Vehicle Theft\",\n        \"total_claim_amount\": \"4200.00\"\n      },\n      {\n        \"incident_date\": \"1998-06-29\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"53640.00\"\n      },\n      {\n        \"incident_date\": \"2012-02-10\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"51090.00\"\n      },\n      {\n        \"incident_date\": \"2013-12-11\",\n        \"incident_type\": \"Parked Car\",\n        \"total_claim_amount\": \"2970.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"23100.00\",\n      \"typical_amount\": \"44720.00\",\n      \"high_amount\": \"61760.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"refer_to_adjuster\",\n    \"reason\": \"missing_document\",\n    \"payable_amount\": null\n  },\n  \"rule_explanation\": \"The rule decision refers the claim to an adjuster because a required document is missing: the file contains no repair estimate (documents.repair_estimate is null), even though the claim form reports a total claim amount of 68160 with incident severity Total Loss.\",\n  \"model_decision\": {\n    \"outcome\": \"refer_to_adjuster\",\n    \"reason\": \"missing_document\",\n    \"payable_amount\": null\n  },\n  \"model_explanation\": \"The model decision also refers the claim to an adjuster for a missing document, resting on the absence of a repair estimate (documents.repair_estimate is null) despite the claim form listing a vehicle claim of 45440 and a total claim amount of 68160.\"\n}"
+      }
+    ],
+    "max_tokens": 300,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's finding on whether the explanations stick to the facts.",
+      "properties": {
+        "grounded": {
+          "description": "False only if an explanation states an unsupported value",
+          "title": "Grounded",
+          "type": "boolean"
+        },
+        "problem": {
+          "description": "The unsupported statement, quoted; empty when grounded",
+          "title": "Problem",
+          "type": "string"
+        }
+      },
+      "required": [
+        "grounded",
+        "problem"
+      ],
+      "title": "Verdict",
+      "type": "object"
+    },
+    "schema_name": "review",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\"grounded\": true, \"problem\": \"\"}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 882,
+      "completion_tokens": 13,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 1.9988664999982575
+  }
+}

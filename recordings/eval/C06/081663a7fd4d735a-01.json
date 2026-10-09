@@ -1,0 +1,54 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You write two short explanations for a claims adjuster who must choose between two decisions on the same claim. One decision was produced by fixed rules, the other by an AI model working independently on the same facts. For each decision, say in one to three sentences which facts it rests on, quoting the values. Do not say which decision is better. Do not state any amount, date, count or number that is not in the input. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00270\",\n        \"policy_number\": 863749,\n        \"incident_date\": \"2015-01-16\",\n        \"incident_type\": \"Vehicle Theft\",\n        \"incident_severity\": \"Minor Damage\",\n        \"injury_claim\": \"760\",\n        \"property_claim\": \"380\",\n        \"vehicle_claim\": \"3420\",\n        \"total_claim_amount\": \"4560\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 863749,\n        \"total_amount\": \"3420\"\n      },\n      \"police_report\": {\n        \"policy_number\": 863749,\n        \"incident_date\": \"2015-01-16\"\n      }\n    },\n    \"policy\": {\n      \"policy_number\": 863749,\n      \"policy_start_date\": \"1990-06-16\",\n      \"policy_deductible\": 500\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"1998-01-23\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"76890.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"1960.00\",\n      \"typical_amount\": \"3920.00\",\n      \"high_amount\": \"6300.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"4060\"\n  },\n  \"model_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"4060\"\n  }\n}"
+      }
+    ],
+    "max_tokens": 600,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's explanation of each of the two decisions.",
+      "properties": {
+        "rule_explanation": {
+          "description": "Why the fixed rules reached their decision",
+          "minLength": 1,
+          "title": "Rule Explanation",
+          "type": "string"
+        },
+        "model_explanation": {
+          "description": "Why the AI model reached its decision",
+          "minLength": 1,
+          "title": "Model Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_explanation",
+        "model_explanation"
+      ],
+      "title": "Explanations",
+      "type": "object"
+    },
+    "schema_name": "explanations",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"rule_explanation\": \"The fixed rules find the claim covered: the claim form reports policy number 863749 with a total claim amount of 4560, the policy exists with a deductible of 500, and the repair estimate of 3420 matches the vehicle claim of 3420. Applying the deductible of 500 to the total claim amount of 4560 yields the payable amount of 4060.\",\n  \"model_explanation\": \"The AI model also finds the claim covered: it relies on the claim form's total claim amount of 4560 under policy 863749, the matching repair estimate of 3420, and the policy deductible of 500. It likewise reaches the payable amount of 4060 after applying the deductible.\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 613,
+      "completion_tokens": 180,
+      "reasoning_tokens": 16
+    },
+    "latency_seconds": 3.61533110000164
+  }
+}

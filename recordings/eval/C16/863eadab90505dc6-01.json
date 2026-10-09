@@ -1,0 +1,80 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You decide what should happen to an auto insurance claim. You are given the facts of the case and a list of rules. Apply the rules strictly in the order given: the first rule whose condition is true decides, and the rules after it are not considered. Use only the facts given. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none.\n\nRules:\n1. reason \"policy_not_found\": policy is null. Outcome: refer_to_adjuster.\n2. reason \"incident_outside_policy_period\": documents.claim_form.incident_date is earlier than policy.policy_start_date. Outcome: recommend_deny.\n3. reason \"missing_document\": documents.repair_estimate is null. Outcome: refer_to_adjuster. A missing police report is not a problem.\n4. reason \"document_mismatch\": documents.repair_estimate.total_amount is not equal to documents.claim_form.vehicle_claim, or documents.police_report is present and its incident_date is not equal to documents.claim_form.incident_date. Outcome: refer_to_adjuster.\n5. reason \"amount_above_reference\": repair_cost_reference is not null and documents.claim_form.vehicle_claim is greater than repair_cost_reference.high_amount. Outcome: refer_to_adjuster.\n6. reason \"frequent_prior_claims\": 3 or more of the prior_claims have an incident_date that is on or after the date 36 months before documents.claim_form.incident_date and before that incident date. Outcome: refer_to_adjuster.\n7. reason \"below_deductible\": documents.claim_form.total_claim_amount is less than or equal to policy.policy_deductible. Outcome: recommend_deny.\n8. reason \"covered\": none of the above. Outcome: recommend_pay, with payable_amount equal to documents.claim_form.total_claim_amount minus policy.policy_deductible.\n\npayable_amount is null unless the outcome is recommend_pay."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"documents\": {\n    \"claim_form\": {\n      \"claim_number\": \"CLM-2015-00703\",\n      \"policy_number\": 512894,\n      \"incident_date\": \"2015-02-12\",\n      \"incident_type\": \"Multi-vehicle Collision\",\n      \"incident_severity\": \"Minor Damage\",\n      \"injury_claim\": \"12380\",\n      \"property_claim\": \"12380\",\n      \"vehicle_claim\": \"43330\",\n      \"total_claim_amount\": \"68090\"\n    },\n    \"repair_estimate\": {\n      \"policy_number\": 512894,\n      \"total_amount\": \"54160\"\n    },\n    \"police_report\": null\n  },\n  \"policy\": {\n    \"policy_number\": 512894,\n    \"policy_start_date\": \"1994-12-12\",\n    \"policy_deductible\": 2000\n  },\n  \"prior_claims\": [\n    {\n      \"incident_date\": \"1997-12-24\",\n      \"incident_type\": \"Multi-vehicle Collision\",\n      \"total_claim_amount\": \"48000.00\"\n    },\n    {\n      \"incident_date\": \"1999-04-25\",\n      \"incident_type\": \"Single Vehicle Collision\",\n      \"total_claim_amount\": \"70000.00\"\n    },\n    {\n      \"incident_date\": \"2004-02-08\",\n      \"incident_type\": \"Parked Car\",\n      \"total_claim_amount\": \"7260.00\"\n    },\n    {\n      \"incident_date\": \"2005-01-27\",\n      \"incident_type\": \"Parked Car\",\n      \"total_claim_amount\": \"6930.00\"\n    },\n    {\n      \"incident_date\": \"2007-01-20\",\n      \"incident_type\": \"Parked Car\",\n      \"total_claim_amount\": \"5900.00\"\n    },\n    {\n      \"incident_date\": \"2012-01-06\",\n      \"incident_type\": \"Multi-vehicle Collision\",\n      \"total_claim_amount\": \"59130.00\"\n    }\n  ],\n  \"repair_cost_reference\": {\n    \"low_amount\": \"24360.00\",\n    \"typical_amount\": \"43360.00\",\n    \"high_amount\": \"61650.00\"\n  }\n}"
+      }
+    ],
+    "max_tokens": 4000,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What should happen to a claim, and the single rule that decided it.",
+      "properties": {
+        "outcome": {
+          "enum": [
+            "recommend_pay",
+            "recommend_deny",
+            "refer_to_adjuster"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "policy_not_found",
+            "incident_outside_policy_period",
+            "missing_document",
+            "document_mismatch",
+            "amount_above_reference",
+            "frequent_prior_claims",
+            "below_deductible",
+            "covered"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "payable_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payable Amount"
+        }
+      },
+      "required": [
+        "outcome",
+        "reason"
+      ],
+      "title": "Decision",
+      "type": "object"
+    },
+    "schema_name": "decision",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": "max"
+  },
+  "response": {
+    "content": "{\n  \"outcome\": \"refer_to_adjuster\",\n  \"reason\": \"document_mismatch\",\n  \"payable_amount\": null\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 993,
+      "completion_tokens": 233,
+      "reasoning_tokens": 207
+    },
+    "latency_seconds": 5.546670900002937
+  }
+}
