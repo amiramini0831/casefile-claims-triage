@@ -17,11 +17,14 @@ dependencies = [
     "Jinja2>=3.1",
     "fpdf2>=2.7",
     "pypdf>=4.0",
+    "langgraph>=1.0",
+    "langgraph-checkpoint-mysql[pymysql]>=3.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
+    "hypothesis>=6.100",
     "ruff>=0.6",
 ]
 

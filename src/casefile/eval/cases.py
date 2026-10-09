@@ -15,15 +15,13 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from casefile.config import PROJECT_ROOT
+from casefile.control.state import EscalationReason
 from casefile.rules import DecisionReason
 
 CASES_PATH = PROJECT_ROOT / "eval" / "cases.yaml"
 
 CaseGroup = Literal["clean", "natural", "document_defect", "system_stress"]
 Outcome = Literal["recommend_pay", "recommend_deny", "refer_to_adjuster", "escalated"]
-EscalationReason = Literal[
-    "max_revisions", "schema_errors", "budget_exceeded", "max_steps"
-]
 
 # A defect is planted in the generated documents of a case.
 DefectType = Literal[

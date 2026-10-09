@@ -12,13 +12,13 @@ evaluation case can be computed instead of being typed in by hand.
 from __future__ import annotations
 
 from collections.abc import Collection, Iterable
+from datetime import date
 from decimal import Decimal
-from typing import Literal, Self
+from typing import Literal, Protocol, Self
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from casefile.data.records import (
-    ClaimRecord,
     PolicyRecord,
     PriorClaimRecord,
     RepairCostReferenceRecord,
@@ -43,6 +43,23 @@ DecisionReason = Literal[
 DocumentIssue = Literal["missing_document", "amount_mismatch", "date_mismatch"]
 
 
+class ClaimFacts(Protocol):
+    """The facts of a claim that the rules look at.
+
+    Both a claim record from the database and the claim form an agent read
+    from the documents have these, so the same rules judge either.
+    """
+
+    @property
+    def policy_number(self) -> int: ...
+    @property
+    def incident_date(self) -> date: ...
+    @property
+    def vehicle_claim(self) -> Decimal: ...
+    @property
+    def total_claim_amount(self) -> Decimal: ...
+
+
 class Decision(BaseModel):
     """What should happen to a claim, and the single rule that decided it."""
 
@@ -60,7 +77,7 @@ class Decision(BaseModel):
 
 
 def count_recent_prior_claims(
-    claim: ClaimRecord, prior_claims: Iterable[PriorClaimRecord]
+    claim: ClaimFacts, prior_claims: Iterable[PriorClaimRecord]
 ) -> int:
     """Count the policy's earlier claims inside the look-back window."""
     window_start = subtract_months(claim.incident_date, FREQUENT_CLAIMS_WINDOW_MONTHS)
@@ -73,7 +90,7 @@ def count_recent_prior_claims(
 
 def decide(
     *,
-    claim: ClaimRecord,
+    claim: ClaimFacts,
     policy: PolicyRecord | None,
     prior_claims: Iterable[PriorClaimRecord] = (),
     reference: RepairCostReferenceRecord | None = None,

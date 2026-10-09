@@ -1,0 +1,765 @@
+{
+  "agents": "stand-ins without a model",
+  "measures": "the control plane only, not model performance",
+  "cases": 30,
+  "matched": 30,
+  "runs": [
+    {
+      "case_id": "C01",
+      "group": "clean",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "75920",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "75920",
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C02",
+      "group": "clean",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53140",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53140",
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C03",
+      "group": "clean",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "67540",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "67540",
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C04",
+      "group": "clean",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53890",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "53890",
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C05",
+      "group": "clean",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "5080",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "5080",
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C06",
+      "group": "clean",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4060",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4060",
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C07",
+      "group": "clean",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4670",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "4670",
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C08",
+      "group": "clean",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "3500",
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "3500",
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C09",
+      "group": "natural",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C10",
+      "group": "natural",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "amount_above_reference",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C11",
+      "group": "natural",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C12",
+      "group": "natural",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C13",
+      "group": "natural",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "frequent_prior_claims",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C14",
+      "group": "natural",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_deny",
+        "reason": "below_deductible",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_deny",
+        "reason": "below_deductible",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C15",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C16",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C17",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C18",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "document_mismatch",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C19",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C20",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "missing_document",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C21",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C22",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "refer_to_adjuster",
+        "reason": "policy_not_found",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C23",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C24",
+      "group": "document_defect",
+      "fault_injection": null,
+      "expected": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "recommend_deny",
+        "reason": "incident_outside_policy_period",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C25",
+      "group": "system_stress",
+      "fault_injection": "extractor_error_first_attempt",
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "71930",
+        "reviewer_send_back": true
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "71930",
+        "reviewer_send_back": true
+      },
+      "steps": 6,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer",
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C26",
+      "group": "system_stress",
+      "fault_injection": "extractor_error_first_attempt",
+      "expected": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "59000",
+        "reviewer_send_back": true
+      },
+      "observed": {
+        "outcome": "recommend_pay",
+        "reason": "covered",
+        "payable_amount": "59000",
+        "reviewer_send_back": true
+      },
+      "steps": 6,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer",
+        "extractor",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C27",
+      "group": "system_stress",
+      "fault_injection": "reviewer_never_approves",
+      "expected": {
+        "outcome": "escalated",
+        "reason": "max_revisions",
+        "payable_amount": null,
+        "reviewer_send_back": true
+      },
+      "observed": {
+        "outcome": "escalated",
+        "reason": "max_revisions",
+        "payable_amount": null,
+        "reviewer_send_back": true
+      },
+      "steps": 9,
+      "path": [
+        "extractor",
+        "investigator",
+        "reviewer",
+        "investigator",
+        "reviewer",
+        "investigator",
+        "reviewer",
+        "investigator",
+        "reviewer"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C28",
+      "group": "system_stress",
+      "fault_injection": "repeated_schema_errors",
+      "expected": {
+        "outcome": "escalated",
+        "reason": "schema_errors",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "escalated",
+        "reason": "schema_errors",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 3,
+      "path": [
+        "extractor",
+        "investigator",
+        "investigator"
+      ],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C29",
+      "group": "system_stress",
+      "fault_injection": "budget_too_small",
+      "expected": {
+        "outcome": "escalated",
+        "reason": "budget_exceeded",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "escalated",
+        "reason": "budget_exceeded",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 0,
+      "path": [],
+      "matched": true,
+      "mismatches": []
+    },
+    {
+      "case_id": "C30",
+      "group": "system_stress",
+      "fault_injection": "step_limit_too_small",
+      "expected": {
+        "outcome": "escalated",
+        "reason": "max_steps",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "observed": {
+        "outcome": "escalated",
+        "reason": "max_steps",
+        "payable_amount": null,
+        "reviewer_send_back": false
+      },
+      "steps": 2,
+      "path": [
+        "extractor",
+        "investigator"
+      ],
+      "matched": true,
+      "mismatches": []
+    }
+  ]
+}

@@ -12,6 +12,7 @@ from casefile.data.records import (
     PriorClaimRecord,
     RepairCostReferenceRecord,
 )
+from casefile.eval.cases import EvalCase, ExpectedResult
 
 INCIDENT_DATE = date(2015, 1, 25)
 POLICY_NUMBER = 1
@@ -77,6 +78,20 @@ def build_prior_claim(
         "vehicle_claim": Decimal(3000),
     }
     return PriorClaimRecord(**{**values, **changes})
+
+
+def build_eval_case() -> EvalCase:
+    """An ordinary evaluation case around ``build_claim`` and ``build_policy``."""
+    return EvalCase(
+        case_id="C01",
+        group="clean",
+        claim_id="CLM-2015-00001",
+        policy_number=POLICY_NUMBER,
+        note="test case",
+        expected=ExpectedResult(
+            outcome="recommend_pay", reason="covered", payable_amount=Decimal(4000)
+        ),
+    )
 
 
 def build_reference(high_amount: int = 6000) -> RepairCostReferenceRecord:

@@ -207,10 +207,20 @@ def test_duplicate_policy_number_is_rejected(
     assert error_code(loader_connection, policies, VALID_POLICY) in DUPLICATE_KEY
 
 
-def test_agent_can_read(agent_connection: Connection) -> None:
-    count = agent_connection.execute(text("SELECT COUNT(*) FROM claims")).scalar_one()
+@pytest.mark.parametrize("table", ["policies", "prior_claims", "repair_cost_reference"])
+def test_agent_can_read_what_it_needs(agent_connection: Connection, table: str) -> None:
+    # The table names are the fixed parameters above.
+    statement = text(f"SELECT COUNT(*) FROM {table}")  # noqa: S608
 
-    assert count >= 0
+    assert agent_connection.execute(statement).scalar_one() >= 0
+
+
+def test_agent_cannot_read_the_current_claims(agent_connection: Connection) -> None:
+    """The claims table holds what the agents must read from the documents."""
+    with pytest.raises(DBAPIError) as raised:
+        agent_connection.execute(text("SELECT claim_id FROM claims LIMIT 1"))
+
+    assert raised.value.orig.args[0] in COMMAND_DENIED
 
 
 # Each statement is harmless even if the grant were wrong and it ran: the

@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterator
 
 import pytest
-from sqlalchemy import Connection, MetaData, Table
+from sqlalchemy import Connection, Engine, MetaData, Table
 from sqlalchemy.exc import OperationalError
 
 from casefile.config import (
@@ -20,6 +20,15 @@ from casefile.config import (
 )
 from casefile.db import create_domain_engine
 
+DOMAIN_TABLES = (
+    "policies",
+    "claims",
+    "prior_claims",
+    "recommendations",
+    "approvals",
+    "write_backs",
+)
+
 
 @pytest.fixture(scope="session")
 def database_settings() -> DatabaseSettings:
@@ -29,14 +38,24 @@ def database_settings() -> DatabaseSettings:
         pytest.skip(f"database is not configured: {error}")
 
 
-def _connection(role: DatabaseRole, settings: DatabaseSettings) -> Iterator[Connection]:
-    """Yield a connection whose work is always rolled back."""
-    engine = create_domain_engine(role, settings)
+def engine_for(role: DatabaseRole, settings: DatabaseSettings) -> Engine:
+    """Return an engine for ``role``, skipping the test if it cannot connect."""
     try:
-        connection = engine.connect()
+        engine = create_domain_engine(role, settings)
+    except ConfigurationError as error:
+        pytest.skip(str(error))
+    try:
+        engine.connect().close()
     except OperationalError as error:
         engine.dispose()
-        pytest.skip(f"MySQL is not reachable: {error.orig}")
+        pytest.skip(f"MySQL is not reachable as {role}: {error.orig}")
+    return engine
+
+
+def _connection(role: DatabaseRole, settings: DatabaseSettings) -> Iterator[Connection]:
+    """Yield a connection whose work is always rolled back."""
+    engine = engine_for(role, settings)
+    connection = engine.connect()
     transaction = connection.begin()
     try:
         yield connection
@@ -57,9 +76,17 @@ def agent_connection(database_settings: DatabaseSettings) -> Iterator[Connection
 
 
 @pytest.fixture
+def writer_connection(database_settings: DatabaseSettings) -> Iterator[Connection]:
+    yield from _connection("writer", database_settings)
+
+
+@pytest.fixture
+def approver_connection(database_settings: DatabaseSettings) -> Iterator[Connection]:
+    yield from _connection("approver", database_settings)
+
+
+@pytest.fixture
 def domain_tables(loader_connection: Connection) -> dict[str, Table]:
     metadata = MetaData()
-    metadata.reflect(
-        bind=loader_connection, only=("policies", "claims", "prior_claims")
-    )
+    metadata.reflect(bind=loader_connection, only=DOMAIN_TABLES)
     return dict(metadata.tables)

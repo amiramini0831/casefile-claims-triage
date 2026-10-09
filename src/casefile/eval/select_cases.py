@@ -134,6 +134,20 @@ class Portfolio:
     prior_claims: Mapping[int, tuple[PriorClaimRecord, ...]]
     reference: Mapping[tuple[str, str], RepairCostReferenceRecord]
 
+    def find_policy(self, policy_number: int) -> PolicyRecord | None:
+        """Return the policy, or ``None`` if the number matches no policy."""
+        return self.policies.get(policy_number)
+
+    def find_prior_claims(self, policy_number: int) -> tuple[PriorClaimRecord, ...]:
+        """Return the earlier claims of a policy."""
+        return self.prior_claims.get(policy_number, ())
+
+    def find_reference(
+        self, incident_type: str, incident_severity: str
+    ) -> RepairCostReferenceRecord | None:
+        """Return the repair cost range for this kind of claim, if any."""
+        return self.reference.get((incident_type, incident_severity))
+
     def decide(self, claim: ClaimRecord, defect: DefectType | None = None) -> Decision:
         """Return the decision for ``claim`` once ``defect`` is planted."""
         policy: PolicyRecord | None = self.policies[claim.policy_number]

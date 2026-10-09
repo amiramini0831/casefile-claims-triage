@@ -1,22 +1,32 @@
 """Create the Casefile domain database, its users and its schema.
 
-Run once on a fresh machine::
+Run on a fresh machine, and again whenever the privileges below change::
 
-    python scripts/setup_database.py
+    python scripts/setup_database.py --ask-admin-password
 
-and whenever db/schema/ changes, which needs no admin account::
+When only db/schema/ changed and no new table needs privileges, no admin
+account is needed::
 
     python scripts/setup_database.py --schema-only
 
-The script connects three times, each time with less privilege:
+Five accounts are created, each limited to what its job requires:
 
-1. as a MySQL admin, to create the database and the two application users;
-2. as the loader user, to apply the SQL files in db/schema/;
-3. as the agent user, to prove that it can read but cannot write.
+* loader    creates the tables and loads data; used by setup and load scripts
+* agent     reads policies, prior claims and the repair cost reference, and
+            nothing else. It cannot read the current claims, which hold the
+            values the agents must take from the documents.
+* writer    the system's own account for the human gate: it stores
+            recommendations and records write-backs, but cannot approve
+* approver  the person's account: it records approvals and rejections
+* graph     stores the checkpoints of each run in a database of its own and
+            cannot see the domain data
 
-Application passwords are generated on the first run and stored in .env,
-which git ignores. They are never printed. The admin password is read from
-the CASEFILE_DB_ADMIN_PASSWORD environment variable or prompted for with
+Because the writer cannot insert an approval, the automated side of the
+system has no credentials with which to approve its own recommendation.
+
+Passwords are generated on the first run and stored in .env, which git
+ignores. They are never printed. The admin password is read from the
+CASEFILE_DB_ADMIN_PASSWORD environment variable or prompted for with
 --ask-admin-password; it is never stored.
 """
 
@@ -28,7 +38,7 @@ import os
 import re
 import secrets
 import sys
-from collections.abc import Callable, Sequence
+from collections.abc import Mapping, Sequence
 from contextlib import closing
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -43,29 +53,104 @@ SCHEMA_DIR = PROJECT_ROOT / "db" / "schema"
 
 # Accounts are usable from this machine only.
 ACCOUNT_HOST = "localhost"
-LOADER_PRIVILEGES = (
-    "SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES"
-)
-AGENT_PRIVILEGES = "SELECT"
+IDENTIFIER_PATTERN = re.compile(r"[a-z][a-z0-9_]{0,31}")
 
 DEFAULTS: dict[str, str] = {
     "CASEFILE_DB_HOST": "127.0.0.1",
     "CASEFILE_DB_PORT": "3306",
     "CASEFILE_DOMAIN_DB": "casefile_domain",
-    "CASEFILE_LOADER_USER": "casefile_loader",
-    "CASEFILE_AGENT_USER": "casefile_agent",
+    "CASEFILE_GRAPH_DB": "casefile_graph",
 }
-PASSWORD_KEYS = ("CASEFILE_LOADER_PASSWORD", "CASEFILE_AGENT_PASSWORD")
-IDENTIFIER_PATTERN = re.compile(r"[a-z][a-z0-9_]{0,31}")
+
+
+@dataclass(frozen=True)
+class Role:
+    """What one account may do. Privileges are per table unless stated.
+
+    An account works in the domain database, except the one for the run
+    checkpoints, which has a database of its own and no access to the domain.
+    """
+
+    database_privileges: str | None = None
+    table_privileges: Mapping[str, str] = field(default_factory=dict)
+    uses_graph_database: bool = False
+
+
+ROLES: dict[str, Role] = {
+    "loader": Role(
+        database_privileges=(
+            "SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES"
+        )
+    ),
+    "agent": Role(
+        table_privileges={
+            "policies": "SELECT",
+            "prior_claims": "SELECT",
+            "repair_cost_reference": "SELECT",
+        }
+    ),
+    "writer": Role(
+        table_privileges={
+            "recommendations": "SELECT, INSERT",
+            "approvals": "SELECT",
+            "write_backs": "SELECT, INSERT",
+        }
+    ),
+    "approver": Role(
+        table_privileges={
+            "recommendations": "SELECT",
+            "approvals": "SELECT, INSERT",
+            "write_backs": "SELECT",
+        }
+    ),
+    # Stores the checkpoints of each run. The checkpoint library creates and
+    # migrates its own tables, hence the schema privileges.
+    "graph": Role(
+        database_privileges="SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX",
+        uses_graph_database=True,
+    ),
+}
+
+# Statements each account must be refused. Every one is harmless even if a
+# grant were wrong and it ran: it reads one row or matches no row at all.
+# {domain} and {graph} stand for the two database names.
+FORBIDDEN: dict[str, tuple[str, ...]] = {
+    "agent": (
+        "SELECT 1 FROM claims LIMIT 1",
+        "SELECT 1 FROM approvals LIMIT 1",
+        "DELETE FROM policies WHERE 1 = 0",
+        "SELECT 1 FROM {graph}.checkpoints LIMIT 1",
+    ),
+    "graph": (
+        "SELECT 1 FROM {domain}.policies LIMIT 1",
+        "SELECT 1 FROM {domain}.claims LIMIT 1",
+        "SELECT 1 FROM {domain}.approvals LIMIT 1",
+    ),
+    "writer": (
+        "INSERT INTO approvals (recommendation_id, claim_number, decision, approver) "
+        "SELECT 0, '', 'approved', '' FROM DUAL WHERE 1 = 0",
+        "DELETE FROM write_backs WHERE 1 = 0",
+        "SELECT 1 FROM claims LIMIT 1",
+    ),
+    "approver": (
+        "INSERT INTO write_backs (approval_id, claim_number) "
+        "SELECT 0, '' FROM DUAL WHERE 1 = 0",
+        "INSERT INTO recommendations "
+        "(run_id, case_id, claim_number, policy_number, outcome, reason, rationale) "
+        "SELECT '', '', '', 0, 'recommend_deny', '', '' FROM DUAL WHERE 1 = 0",
+        "DELETE FROM approvals WHERE 1 = 0",
+    ),
+}
 
 
 @dataclass(frozen=True)
 class Account:
-    """A MySQL account and the privileges it gets on the domain database."""
+    """A MySQL account and its role."""
 
+    name: str
     user: str
     password: str = field(repr=False)
-    privileges: str
+    role: Role
 
 
 @dataclass(frozen=True)
@@ -75,15 +160,21 @@ class Settings:
     host: str
     port: int
     database: str
-    loader: Account
-    agent: Account
+    graph_database: str
+    accounts: Mapping[str, Account]
+
+    def database_of(self, account: Account) -> str:
+        """Return the database ``account`` works in."""
+        if account.role.uses_graph_database:
+            return self.graph_database
+        return self.database
 
 
 def validate_identifier(name: str) -> str:
     """Return ``name`` if it is safe to use as a MySQL identifier.
 
-    Database names cannot be sent as query parameters, so the one identifier
-    this script interpolates into SQL is restricted to a strict pattern.
+    Database and table names cannot be sent as query parameters, so the
+    identifiers this script interpolates into SQL are held to a strict pattern.
     """
     if not IDENTIFIER_PATTERN.fullmatch(name):
         raise ValueError(f"Unsafe MySQL identifier: {name!r}")
@@ -99,34 +190,30 @@ def load_settings() -> tuple[Settings, dict[str, str]]:
     stored = dotenv_values(ENV_PATH) if ENV_PATH.exists() else {}
     missing: dict[str, str] = {}
 
-    def resolve(key: str, fallback: Callable[[], str]) -> str:
+    def resolve(key: str, fallback: str) -> str:
         value = stored.get(key)
         if not value:
-            value = fallback()
+            value = fallback
             missing[key] = value
         return value
 
-    values = {
-        key: resolve(key, lambda d=default: d) for key, default in DEFAULTS.items()
-    }
-    passwords = {
-        key: resolve(key, lambda: secrets.token_urlsafe(32)) for key in PASSWORD_KEYS
-    }
+    values = {key: resolve(key, default) for key, default in DEFAULTS.items()}
+    accounts = {}
+    for name, role in ROLES.items():
+        prefix = f"CASEFILE_{name.upper()}"
+        accounts[name] = Account(
+            name=name,
+            user=validate_identifier(resolve(f"{prefix}_USER", f"casefile_{name}")),
+            password=resolve(f"{prefix}_PASSWORD", secrets.token_urlsafe(32)),
+            role=role,
+        )
 
     settings = Settings(
         host=values["CASEFILE_DB_HOST"],
         port=int(values["CASEFILE_DB_PORT"]),
         database=validate_identifier(values["CASEFILE_DOMAIN_DB"]),
-        loader=Account(
-            user=validate_identifier(values["CASEFILE_LOADER_USER"]),
-            password=passwords["CASEFILE_LOADER_PASSWORD"],
-            privileges=LOADER_PRIVILEGES,
-        ),
-        agent=Account(
-            user=validate_identifier(values["CASEFILE_AGENT_USER"]),
-            password=passwords["CASEFILE_AGENT_PASSWORD"],
-            privileges=AGENT_PRIVILEGES,
-        ),
+        graph_database=validate_identifier(values["CASEFILE_GRAPH_DB"]),
+        accounts=accounts,
     )
     return settings, missing
 
@@ -161,21 +248,36 @@ def connect(
     )
 
 
+def connect_as(
+    settings: Settings, name: str, **options: int
+) -> pymysql.connections.Connection:
+    """Open a connection as one of the accounts, to the database it works in."""
+    account = settings.accounts[name]
+    return connect(
+        settings,
+        account.user,
+        account.password,
+        database=settings.database_of(account),
+        **options,
+    )
+
+
 def create_database_and_users(
     admin: pymysql.connections.Connection, settings: Settings
 ) -> None:
-    """Create the domain database and reset both accounts to exact grants.
+    """Create the databases and accounts, leaving only database-wide grants.
 
-    Privileges are revoked before they are granted, so re-running the script
-    after narrowing a privilege list really removes the dropped privileges.
+    Every privilege is revoked first, so re-running the script after a role
+    was narrowed really removes what was dropped. Table privileges are granted
+    later, once the schema exists.
     """
-    database = settings.database
     with admin.cursor() as cursor:
-        cursor.execute(
-            f"CREATE DATABASE IF NOT EXISTS `{database}` "
-            "CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci"
-        )
-        for account in (settings.loader, settings.agent):
+        for database in (settings.database, settings.graph_database):
+            cursor.execute(
+                f"CREATE DATABASE IF NOT EXISTS `{database}` "
+                "CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci"
+            )
+        for account in settings.accounts.values():
             identity = (account.user, ACCOUNT_HOST)
             cursor.execute(
                 "CREATE USER IF NOT EXISTS %s@%s IDENTIFIED BY %s",
@@ -186,21 +288,33 @@ def create_database_and_users(
                 "ALTER USER %s@%s IDENTIFIED BY %s", (*identity, account.password)
             )
             cursor.execute("REVOKE ALL PRIVILEGES, GRANT OPTION FROM %s@%s", identity)
-            cursor.execute(
-                f"GRANT {account.privileges} ON `{database}`.* TO %s@%s", identity
-            )
+            privileges = account.role.database_privileges
+            if privileges:
+                database = settings.database_of(account)
+                cursor.execute(
+                    f"GRANT {privileges} ON `{database}`.* TO %s@%s", identity
+                )
+
+
+def grant_table_privileges(
+    admin: pymysql.connections.Connection, settings: Settings
+) -> None:
+    """Grant each account its privileges on individual tables."""
+    database = settings.database
+    with admin.cursor() as cursor:
+        for account in settings.accounts.values():
+            for table, privileges in account.role.table_privileges.items():
+                target = f"`{database}`.`{validate_identifier(table)}`"
+                cursor.execute(
+                    f"GRANT {privileges} ON {target} TO %s@%s",
+                    (account.user, ACCOUNT_HOST),
+                )
 
 
 def apply_schema(settings: Settings) -> list[str]:
-    """Run every SQL file in db/schema/ in name order as the loader user."""
+    """Run every SQL file in db/schema/ in name order as the loader account."""
     paths = sorted(SCHEMA_DIR.glob("*.sql"))
-    connection = connect(
-        settings,
-        settings.loader.user,
-        settings.loader.password,
-        database=settings.database,
-        client_flag=CLIENT.MULTI_STATEMENTS,
-    )
+    connection = connect_as(settings, "loader", client_flag=CLIENT.MULTI_STATEMENTS)
     with closing(connection), connection.cursor() as cursor:
         for path in paths:
             cursor.execute(path.read_text(encoding="utf-8"))
@@ -210,31 +324,37 @@ def apply_schema(settings: Settings) -> list[str]:
     return [path.name for path in paths]
 
 
-def verify_agent_is_read_only(settings: Settings) -> list[str]:
-    """Check that the agent user can list the tables but cannot modify them.
+def verify_privileges(settings: Settings) -> None:
+    """Prove that every limited account can do its job and nothing beyond it.
 
-    Returns the table names the agent can see. Raises if a write is accepted.
+    Raises if an account cannot read a table it was granted, or if a
+    statement it must be refused is accepted.
     """
-    connection = connect(
-        settings,
-        settings.agent.user,
-        settings.agent.password,
-        database=settings.database,
-    )
-    with closing(connection), connection.cursor() as cursor:
-        cursor.execute("SHOW TABLES")
-        tables = sorted(row[0] for row in cursor.fetchall())
-        if not tables:
-            raise RuntimeError("The agent user cannot see any table.")
-        try:
-            # Matches no row, so it is harmless even if the grant were wrong.
-            cursor.execute("DELETE FROM policies WHERE 1 = 0")
-        except pymysql.err.OperationalError as error:
-            if error.args[0] != ER.TABLEACCESS_DENIED_ERROR:
-                raise
-        else:
-            raise RuntimeError("The agent user was allowed to run DELETE.")
-    return tables
+    names = {
+        "domain": f"`{settings.database}`",
+        "graph": f"`{settings.graph_database}`",
+    }
+    denied = (ER.TABLEACCESS_DENIED_ERROR, ER.DBACCESS_DENIED_ERROR)
+    for name, statements in FORBIDDEN.items():
+        connection = connect_as(settings, name)
+        with closing(connection), connection.cursor() as cursor:
+            for table in settings.accounts[name].role.table_privileges:
+                # The table name is a constant of this script and is validated.
+                readable = f"`{validate_identifier(table)}`"
+                cursor.execute(f"SELECT 1 FROM {readable} LIMIT 1")  # noqa: S608
+                cursor.fetchall()
+            for template in statements:
+                statement = template.format(**names)
+                try:
+                    cursor.execute(statement)
+                except pymysql.err.OperationalError as error:
+                    if error.args[0] not in denied:
+                        raise
+                else:
+                    raise RuntimeError(f"{name} was allowed to run: {statement}")
+        print(
+            f"Account {name!r}: allowed tables readable, forbidden statements refused."
+        )
 
 
 def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
@@ -254,20 +374,19 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     parser.add_argument(
         "--schema-only",
         action="store_true",
-        help="skip the admin step and only apply db/schema/ as the loader user",
+        help="skip the admin steps and only apply db/schema/ as the loader account",
     )
     return parser.parse_args(argv)
 
 
-def create_as_admin(
-    args: argparse.Namespace, settings: Settings, missing: dict[str, str]
-) -> bool:
-    """Run the admin step. Returns False if the admin cannot connect."""
+def connect_as_admin(
+    args: argparse.Namespace, settings: Settings
+) -> pymysql.connections.Connection | None:
+    """Open the admin connection, or return None after explaining why not."""
     if args.ask_admin_password:
         admin_password = getpass.getpass(f"MySQL password for {args.admin_user}: ")
     else:
         admin_password = os.environ.get("CASEFILE_DB_ADMIN_PASSWORD", "")
-
     try:
         admin = connect(settings, args.admin_user, admin_password)
     except pymysql.err.OperationalError as error:
@@ -276,21 +395,14 @@ def create_as_admin(
             f"as {args.admin_user!r}: {error.args[1]}",
             file=sys.stderr,
         )
-        return False
-
-    # Only now, so a failed connection does not leave unused passwords behind.
-    persist(missing)
-    with closing(admin):
-        create_database_and_users(admin, settings)
-    print(f"Database {settings.database!r} and users are in place.")
-
+        return None
     if not admin_password:
         print(
             f"WARNING: {args.admin_user!r} has an empty password. "
             "Set one before exposing this server to a network.",
             file=sys.stderr,
         )
-    return True
+    return admin
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -299,21 +411,37 @@ def main(argv: Sequence[str] | None = None) -> int:
     settings, missing = load_settings()
 
     if args.schema_only:
-        if missing:
+        # Applying the schema only needs the loader account.
+        needed = [
+            key
+            for key in missing
+            if key.startswith(("CASEFILE_DB_", "CASEFILE_DOMAIN_", "CASEFILE_LOADER_"))
+        ]
+        if needed:
             print(
-                f".env lacks {', '.join(missing)}. "
+                f".env lacks {', '.join(needed)}. "
                 "Run this script once without --schema-only.",
                 file=sys.stderr,
             )
             return 1
-    elif not create_as_admin(args, settings, missing):
+        applied = apply_schema(settings)
+        print(f"Applied schema files: {', '.join(applied) or 'none'}")
+        print("Privileges were not changed; a new table needs a full run.")
+        return 0
+
+    admin = connect_as_admin(args, settings)
+    if admin is None:
         return 1
+    # Only now, so a failed connection does not leave unused passwords behind.
+    persist(missing)
+    with closing(admin):
+        create_database_and_users(admin, settings)
+        print(f"Database {settings.database!r} and accounts are in place.")
+        applied = apply_schema(settings)
+        print(f"Applied schema files: {', '.join(applied) or 'none'}")
+        grant_table_privileges(admin, settings)
 
-    applied = apply_schema(settings)
-    print(f"Applied schema files: {', '.join(applied) or 'none'}")
-
-    tables = verify_agent_is_read_only(settings)
-    print(f"Agent user is read-only and sees: {', '.join(tables)}")
+    verify_privileges(settings)
     return 0
 
 
