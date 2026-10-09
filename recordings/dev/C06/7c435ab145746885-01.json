@@ -1,0 +1,51 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You check two explanations written for a claims adjuster. You are given the facts of a case, two decisions about it and the explanation of each.\n\nSet \"grounded\" to false only if an explanation states a specific value (an amount, a date, a count or a policy number) that contradicts the facts, or that cannot be obtained from the facts by simple arithmetic or by counting. Do not judge whether either decision is correct. Do not object to the two decisions being different from each other. Wording, style and length are not your concern.\n\nWhen \"grounded\" is false, quote the unsupported statement in \"problem\". Otherwise leave \"problem\" empty. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00057\",\n        \"policy_number\": 795847,\n        \"incident_date\": \"2015-01-04\",\n        \"incident_type\": \"Vehicle Theft\",\n        \"incident_severity\": \"Trivial Damage\",\n        \"injury_claim\": \"1180\",\n        \"property_claim\": \"1180\",\n        \"vehicle_claim\": \"4720\",\n        \"total_claim_amount\": \"7080\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 795847,\n        \"total_amount\": \"4720\"\n      },\n      \"police_report\": null\n    },\n    \"policy\": {\n      \"policy_number\": 795847,\n      \"policy_start_date\": \"1990-01-04\",\n      \"policy_deductible\": 1000\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"1992-11-04\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"72200.00\"\n      },\n      {\n        \"incident_date\": \"1999-03-18\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"60840.00\"\n      },\n      {\n        \"incident_date\": \"2007-07-08\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"57000.00\"\n      },\n      {\n        \"incident_date\": \"2008-01-31\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"54400.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"2100.00\",\n      \"typical_amount\": \"3850.00\",\n      \"high_amount\": \"5670.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"6080\"\n  },\n  \"rule_explanation\": \"The claim form reports a Vehicle Theft on 2015-01-04 under policy 795847 with a total claim amount of 7080, and the repair estimate for that policy totals 4720, which falls within the repair cost reference range of 2100.00 to 5670.00. Applying the policy deductible of 1000 to the total claim amount of 7080 yields the payable amount of 6080.\",\n  \"model_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"6080\"\n  },\n  \"model_explanation\": \"The model likewise relies on the claim form's Vehicle Theft of Trivial Damage severity on 2015-01-04 with a total claim amount of 7080, corroborated by the repair estimate of 4720 on policy 795847, which sits within the usual repair cost range whose typical amount is 3850.00. After subtracting the policy deductible of 1000 from the total claim amount of 7080, it arrives at the payable amount of 6080.\"\n}"
+      }
+    ],
+    "max_tokens": 300,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's finding on whether the explanations stick to the facts.",
+      "properties": {
+        "grounded": {
+          "description": "False only if an explanation states an unsupported value",
+          "title": "Grounded",
+          "type": "boolean"
+        },
+        "problem": {
+          "description": "The unsupported statement, quoted; empty when grounded",
+          "title": "Problem",
+          "type": "string"
+        }
+      },
+      "required": [
+        "grounded",
+        "problem"
+      ],
+      "title": "Verdict",
+      "type": "object"
+    },
+    "schema_name": "review",
+    "temperature": 0.0,
+    "seed": 0
+  },
+  "response": {
+    "content": "{\"grounded\": true, \"problem\": \"\"}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 976,
+      "completion_tokens": 13,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 7.990206099999341
+  }
+}

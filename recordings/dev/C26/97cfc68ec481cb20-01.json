@@ -1,0 +1,51 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You check two explanations written for a claims adjuster. You are given the facts of a case, two decisions about it and the explanation of each.\n\nSet \"grounded\" to false only if an explanation states a specific value (an amount, a date, a count or a policy number) that contradicts the facts, or that cannot be obtained from the facts by simple arithmetic or by counting. Do not judge whether either decision is correct. Do not object to the two decisions being different from each other. Wording, style and length are not your concern.\n\nWhen \"grounded\" is false, quote the unsupported statement in \"problem\". Otherwise leave \"problem\" empty. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00968\",\n        \"policy_number\": 942106,\n        \"incident_date\": \"2015-02-27\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"incident_severity\": \"Total Loss\",\n        \"injury_claim\": \"4200\",\n        \"property_claim\": \"8400\",\n        \"vehicle_claim\": \"33600\",\n        \"total_claim_amount\": \"46200\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 942106,\n        \"total_amount\": \"33600\"\n      },\n      \"police_report\": null\n    },\n    \"policy\": {\n      \"policy_number\": 942106,\n      \"policy_start_date\": \"1998-02-27\",\n      \"policy_deductible\": 2000\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"1998-10-02\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"58500.00\"\n      },\n      {\n        \"incident_date\": \"2009-06-21\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"42240.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"28800.00\",\n      \"typical_amount\": \"46000.00\",\n      \"high_amount\": \"64480.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"44200\"\n  },\n  \"rule_explanation\": \"The rule-based decision rests on the claim form's total claim amount of 46200 for a Single Vehicle Collision marked Total Loss, reduced by the policy deductible of 2000, yielding a payable amount of 44200. It treats the incident as covered under policy 942106.\",\n  \"model_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"44200\"\n  },\n  \"model_explanation\": \"The model decision rests on the same claim form total of 46200 and the policy deductible of 2000, producing a payable amount of 44200. It also considers the repair estimate of 33600, which falls within the repair cost reference range of 28800.00 to 64480.00, supporting coverage.\"\n}"
+      }
+    ],
+    "max_tokens": 300,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's finding on whether the explanations stick to the facts.",
+      "properties": {
+        "grounded": {
+          "description": "False only if an explanation states an unsupported value",
+          "title": "Grounded",
+          "type": "boolean"
+        },
+        "problem": {
+          "description": "The unsupported statement, quoted; empty when grounded",
+          "title": "Problem",
+          "type": "string"
+        }
+      },
+      "required": [
+        "grounded",
+        "problem"
+      ],
+      "title": "Verdict",
+      "type": "object"
+    },
+    "schema_name": "review",
+    "temperature": 0.0,
+    "seed": 0
+  },
+  "response": {
+    "content": "{\"grounded\": true, \"problem\": \"\"}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 824,
+      "completion_tokens": 13,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 1.3182004999980563
+  }
+}

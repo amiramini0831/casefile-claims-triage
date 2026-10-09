@@ -30,6 +30,10 @@ dist/
 .coverage
 htmlcov/
 
+# Model answers from trying the live runner on development cases. The
+# recordings that back a report (extraction, dev, eval) are committed.
+recordings/dev_live/
+
 # Logs
 *.log
 

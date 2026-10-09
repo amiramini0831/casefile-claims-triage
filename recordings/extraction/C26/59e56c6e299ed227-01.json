@@ -1,0 +1,58 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read one insurance document and report the requested fields exactly as the document states them. Do not correct, complete or infer values. Write dates as YYYY-MM-DD and amounts as plain numbers without currency symbols or thousands separators. Answer with JSON only."
+      },
+      {
+        "role": "user",
+        "content": "This is the text of a vehicle repair estimate. Report its fields.\n\nSummit Collision Center\nVehicle Repair Estimate\nEstimate number: EST-791870\nEstimate date: 2015-02-17\nCustomer: Kevin Osborne\nVehicle: 1997 Honda Accord\nInsurer: Casefile Mutual Insurance\nClaim number: CLM-2015-00718\nPolicy number: 342830\nEstimated cost of repair (USD)\nDescription Type Amount\nRocker panel Parts 13,333.00\nSide curtain airbag Parts 7,715.00\nRear door shell Parts 6,351.00\nBody labor Labor 8,608.00\nPaint and materials Paint 8,993.00\nEstimate total 45,000.00\nThis estimate is based on a visual inspection. Hidden damage found during repair may change the final cost."
+      }
+    ],
+    "max_tokens": 400,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What the repair estimate states.",
+      "properties": {
+        "policy_number": {
+          "description": "Policy number printed on this estimate",
+          "title": "Policy Number",
+          "type": "integer"
+        },
+        "total_amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Estimate total in USD, not the amount of a single line",
+          "title": "Total Amount"
+        }
+      },
+      "required": [
+        "policy_number",
+        "total_amount"
+      ],
+      "title": "RepairEstimateFields",
+      "type": "object"
+    },
+    "schema_name": "repair_estimate",
+    "temperature": 0.0,
+    "seed": 0
+  },
+  "response": {
+    "content": "{\n  \"policy_number\": 342830,\n  \"total_amount\": 45000.00\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 251,
+      "completion_tokens": 26,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 1.7138348000007682
+  }
+}

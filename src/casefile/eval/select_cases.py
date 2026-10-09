@@ -192,7 +192,11 @@ def build_portfolio(
     )
 
 
-def select_cases(portfolio: Portfolio, seed: int = SEED) -> EvalSuite:
+def select_cases(
+    portfolio: Portfolio,
+    seed: int = SEED,
+    natural_quotas: Sequence[tuple[DecisionReason, int]] = NATURAL_QUOTAS,
+) -> EvalSuite:
     """Draw the cases and compute what each one is expected to end in."""
     rng = random.Random(seed)  # noqa: S311 - sampling, not cryptography
     pools: dict[DecisionReason, list[ClaimRecord]] = defaultdict(list)
@@ -218,7 +222,7 @@ def select_cases(portfolio: Portfolio, seed: int = SEED) -> EvalSuite:
         for claim in draw(of_type, CLEAN_CASES_PER_INCIDENT_TYPE, incident_type):
             covered.remove(claim)
             drafts.append(("clean", claim, None, None))
-    for reason, count in NATURAL_QUOTAS:
+    for reason, count in natural_quotas:
         for claim in draw(pools[reason], count, reason):
             drafts.append(("natural", claim, None, None))
     for defect in get_args(DefectType):

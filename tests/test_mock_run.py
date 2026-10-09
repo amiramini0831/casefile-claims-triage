@@ -173,7 +173,9 @@ def test_clean_case_runs_straight_through() -> None:
     assert result.passed
     assert result.state.path == ("extractor", "investigator", "reviewer")
     assert result.state.budget_spent == Decimal(3)
-    assert result.state.recommendation.rationale == "Rule applied: covered."
+    recommendation = result.state.recommendation
+    assert recommendation.rule_explanation == "Rule applied: covered."
+    assert recommendation.decisions_agree
 
 
 @pytest.mark.parametrize(

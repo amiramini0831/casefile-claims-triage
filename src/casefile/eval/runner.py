@@ -38,7 +38,10 @@ def observed_result(state: CaseState) -> ExpectedResult:
         )
     if state.status != "completed" or state.recommendation is None:
         raise ValueError(f"case {state.case_id} has not finished")
-    decision = state.recommendation.decision
+    # The pre-registered results were computed by the rules, so it is the
+    # rules' decision that is held against them. How the model's own decision
+    # compares is reported separately.
+    decision = state.recommendation.rule_decision
     return ExpectedResult(
         outcome=decision.outcome,
         reason=decision.reason,

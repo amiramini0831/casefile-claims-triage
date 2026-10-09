@@ -65,8 +65,10 @@ EXTRACTION = Extraction(
     )
 )
 RECOMMENDATION = Recommendation(
-    decision=Decision(outcome="recommend_deny", reason="below_deductible"),
-    rationale="test",
+    rule_decision=Decision(outcome="recommend_deny", reason="below_deductible"),
+    model_decision=Decision(outcome="recommend_deny", reason="below_deductible"),
+    rule_explanation="test",
+    model_explanation="test",
 )
 
 

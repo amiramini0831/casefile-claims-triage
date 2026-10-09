@@ -1,0 +1,52 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You read one insurance document and report the requested fields exactly as the document states them. Do not correct, complete or infer values. Write dates as YYYY-MM-DD and amounts as plain numbers without currency symbols or thousands separators. Answer with JSON only."
+      },
+      {
+        "role": "user",
+        "content": "This is the text of a police incident report. Report its fields.\n\nNorthbrook Police Department\nIncident Report\nReport number: PR-736109\nReport date: Sep 12, 1996\nIncident\nDate of incident: Sep 11, 1996\nTime of incident: 01:00\nLocation: 4699 Texas Ridge, Northbrook, VA\nType of incident: Single Vehicle Collision\nType of collision: Side Collision\nVehicles involved: 1\nWitnesses: 2\nDriver and vehicle\nDriver: Linda Graham\nVehicle: 2006 Toyota Highlander\nInsurance policy number: 947598\nNarrative\nThe insured vehicle left the roadway and struck a fixed object at 4699 Texas Ridge, Northbrook. The impact was to the side\nof the vehicle. The incident occurred at approximately 01:00."
+      }
+    ],
+    "max_tokens": 400,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "What the police report states.",
+      "properties": {
+        "policy_number": {
+          "description": "Insurance policy number printed on this report",
+          "title": "Policy Number",
+          "type": "integer"
+        },
+        "incident_date": {
+          "description": "Date of the incident, not the date of the report",
+          "format": "date",
+          "title": "Incident Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_number",
+        "incident_date"
+      ],
+      "title": "PoliceReportFields",
+      "type": "object"
+    },
+    "schema_name": "police_report",
+    "temperature": 0.0,
+    "seed": 0
+  },
+  "response": {
+    "content": "{\n  \"policy_number\": 947598,\n  \"incident_date\": \"1996-09-11\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 244,
+      "completion_tokens": 30,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 1.6419048999996448
+  }
+}

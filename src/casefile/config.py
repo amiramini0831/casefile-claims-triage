@@ -13,6 +13,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 ENV_PATH = PROJECT_ROOT / ".env"
 RAW_DATA_DIR = PROJECT_ROOT / "data" / "raw"
 REPORTS_DIR = PROJECT_ROOT / "reports"
+# Recorded model answers, so that a run can be repeated without the model.
+RECORDINGS_DIR = PROJECT_ROOT / "recordings"
 
 # loader:   creates tables and loads data
 # agent:    reads policies, prior claims and the repair cost reference only
@@ -57,6 +59,45 @@ class DatabaseSettings(BaseModel):
                 "Run scripts/setup_database.py to create them."
             )
         return account.user, account.password
+
+
+class LLMSettings(BaseModel):
+    """How to reach the language model: any OpenAI-compatible chat API."""
+
+    model_config = ConfigDict(frozen=True)
+
+    base_url: str
+    model: str
+    api_key: SecretStr
+    # Sent with every request when set. GLM-5.3 reasons at its maximum unless
+    # told otherwise, which is slow and can use up the whole output allowance.
+    reasoning_effort: str | None = "low"
+    timeout_seconds: float = 120.0
+
+
+def load_llm_settings(env_path: Path = ENV_PATH) -> LLMSettings:
+    """Build the model settings from the environment and .env."""
+    file_values = dotenv_values(env_path) if env_path.exists() else {}
+
+    def read(key: str) -> str | None:
+        return os.environ.get(key) or file_values.get(key)
+
+    required = {
+        "base_url": "CASEFILE_LLM_BASE_URL",
+        "model": "CASEFILE_LLM_MODEL",
+        "api_key": "CASEFILE_LLM_API_KEY",
+    }
+    values = {name: read(key) for name, key in required.items()}
+    missing = [required[name] for name, value in values.items() if not value]
+    if missing:
+        raise ConfigurationError(
+            f"Missing settings: {', '.join(missing)}. Set them in .env; "
+            ".env.example shows the names."
+        )
+    effort = read("CASEFILE_LLM_REASONING_EFFORT")
+    if effort:
+        values["reasoning_effort"] = None if effort.lower() == "none" else effort
+    return LLMSettings(**values)
 
 
 def load_database_settings(env_path: Path = ENV_PATH) -> DatabaseSettings:

@@ -13,6 +13,8 @@ from casefile.data.records import (
     RepairCostReferenceRecord,
 )
 from casefile.eval.cases import EvalCase, ExpectedResult
+from casefile.llm.budget import worst_case_tokens
+from casefile.llm.client import ChatRequest, ChatResponse, Usage
 
 INCIDENT_DATE = date(2015, 1, 25)
 POLICY_NUMBER = 1
@@ -78,6 +80,37 @@ def build_prior_claim(
         "vehicle_claim": Decimal(3000),
     }
     return PriorClaimRecord(**{**values, **changes})
+
+
+class ScriptedLLM:
+    """A stand-in model: answers each kind of request from a prepared list.
+
+    Requests are told apart by their schema name. Every call is recorded and
+    costs ``tokens_per_call`` tokens.
+    """
+
+    def __init__(
+        self, answers: dict[str, list[str]], tokens_per_call: int = 100
+    ) -> None:
+        self._answers = {name: list(contents) for name, contents in answers.items()}
+        self._tokens = tokens_per_call
+        self.requests: list[ChatRequest] = []
+
+    def worst_case(self, request: ChatRequest) -> int:
+        return worst_case_tokens(request)
+
+    def complete(self, request: ChatRequest) -> ChatResponse:
+        self.requests.append(request)
+        return ChatResponse(
+            content=self._answers[request.schema_name].pop(0),
+            finish_reason="stop",
+            usage=Usage(prompt_tokens=self._tokens - 10, completion_tokens=10),
+            latency_seconds=0.1,
+        )
+
+    def sent(self, schema_name: str) -> list[ChatRequest]:
+        """Return the requests made for one kind of answer."""
+        return [r for r in self.requests if r.schema_name == schema_name]
 
 
 def build_eval_case() -> EvalCase:

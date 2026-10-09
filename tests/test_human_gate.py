@@ -35,16 +35,26 @@ FOREIGN_KEY_VIOLATED = {1216, 1452}
 DUPLICATE_KEY = {1062}
 COMMAND_DENIED = {1142}
 
-PAY = Recommendation(
-    decision=Decision(
-        outcome="recommend_pay", reason="covered", payable_amount=Decimal("4000.00")
-    ),
-    rationale="Rule applied: covered.",
+PAY_4000 = Decision(
+    outcome="recommend_pay", reason="covered", payable_amount=Decimal("4000.00")
 )
-DENY = Recommendation(
-    decision=Decision(outcome="recommend_deny", reason="below_deductible"),
-    rationale="Rule applied: below_deductible.",
-)
+DENIED = Decision(outcome="recommend_deny", reason="below_deductible")
+REFERRED = Decision(outcome="refer_to_adjuster", reason="frequent_prior_claims")
+
+
+def recommend(rule: Decision, model: Decision | None = None) -> Recommendation:
+    return Recommendation(
+        rule_decision=rule,
+        model_decision=model or rule,
+        rule_explanation=f"Rules: {rule.reason}.",
+        model_explanation=f"Model: {(model or rule).reason}.",
+    )
+
+
+PAY = recommend(PAY_4000)
+DENY = recommend(DENIED)
+# The rules would pay; the model would send the claim to a person.
+SPLIT = recommend(PAY_4000, REFERRED)
 
 
 def new_run_id() -> str:
@@ -82,11 +92,18 @@ def store(
     )
 
 
-def decide(connection: Connection, recommendation_id: int, decision: str) -> int:
+def decide(
+    connection: Connection,
+    recommendation_id: int,
+    decision: str,
+    chosen: str | None = "rule",
+) -> int:
+    """Record a decision; an approval chooses the rules' decision by default."""
     return record_decision(
         connection,
         recommendation_id=recommendation_id,
         decision=decision,
+        chosen=chosen if decision == "approved" else None,
         approver="Test Adjuster",
     )
 
@@ -111,12 +128,76 @@ def test_recommendation_is_stored_once_per_run(
     assert first == again
     row = loader_connection.execute(
         text(
-            "SELECT outcome, reason, payable_amount FROM recommendations "
-            "WHERE recommendation_id = :id"
+            "SELECT rule_outcome, rule_reason, rule_payable_amount, decisions_agree "
+            "FROM recommendations WHERE recommendation_id = :id"
         ),
         {"id": first},
     ).one()
-    assert tuple(row) == ("recommend_pay", "covered", Decimal("4000.00"))
+    assert tuple(row) == ("recommend_pay", "covered", Decimal("4000.00"), 1)
+
+
+def test_both_decisions_are_stored_side_by_side(
+    loader_connection: Connection, claim_numbers: list[str]
+) -> None:
+    recommendation_id = store(loader_connection, claim_numbers[0], SPLIT)
+
+    (row,) = [
+        row
+        for row in pending_recommendations(loader_connection)
+        if row["recommendation_id"] == recommendation_id
+    ]
+
+    assert (row["rule_outcome"], row["rule_payable_amount"]) == (
+        "recommend_pay",
+        Decimal("4000.00"),
+    )
+    assert (row["model_outcome"], row["model_reason"]) == (
+        "refer_to_adjuster",
+        "frequent_prior_claims",
+    )
+    assert row["model_payable_amount"] == Decimal("0.00")
+    assert row["decisions_agree"] == 0
+    assert row["model_explanation"] == "Model: frequent_prior_claims."
+
+
+@pytest.mark.parametrize(
+    ("chosen", "outcome", "amount"),
+    [
+        ("rule", "recommend_pay", Decimal("4000.00")),
+        ("model", "refer_to_adjuster", Decimal("0.00")),
+    ],
+)
+def test_write_back_carries_out_the_decision_the_person_chose(
+    loader_connection: Connection,
+    claim_numbers: list[str],
+    chosen: str,
+    outcome: str,
+    amount: Decimal,
+) -> None:
+    recommendation_id = store(loader_connection, claim_numbers[0], SPLIT)
+    approval_id = decide(loader_connection, recommendation_id, "approved", chosen)
+
+    done = write_back(loader_connection, approval_id)
+
+    assert (done.chosen_decision, done.outcome, done.payable_amount) == (
+        chosen,
+        outcome,
+        amount,
+    )
+
+
+def test_approval_must_choose_and_rejection_must_not(
+    loader_connection: Connection, claim_numbers: list[str]
+) -> None:
+    recommendation_id = store(loader_connection, claim_numbers[0], SPLIT)
+    arguments = {"recommendation_id": recommendation_id, "approver": "Test Adjuster"}
+
+    with pytest.raises(GateError, match="must choose"):
+        record_decision(loader_connection, decision="approved", **arguments)
+    with pytest.raises(GateError, match="does not choose"):
+        record_decision(
+            loader_connection, decision="rejected", chosen="model", **arguments
+        )
 
 
 def test_recommendation_for_an_unknown_claim_is_refused(
@@ -163,6 +244,7 @@ def test_decision_needs_a_recommendation_and_a_name(
             loader_connection,
             recommendation_id=recommendation_id,
             decision="approved",
+            chosen="rule",
             approver="   ",
         )
 
@@ -305,6 +387,7 @@ def test_table_refuses_an_approval_without_a_recommendation(
         "recommendation_id": 999_999_999,
         "claim_number": claim_numbers[0],
         "decision": "approved",
+        "chosen_decision": "rule",
         "approver": "Nobody",
     }
 
@@ -314,12 +397,37 @@ def test_table_refuses_an_approval_without_a_recommendation(
 
 
 @pytest.mark.parametrize(
+    ("decision", "chosen"), [("approved", None), ("rejected", "model")]
+)
+def test_table_refuses_an_approval_whose_choice_does_not_fit(
+    loader_connection: Connection,
+    domain_tables: dict[str, Table],
+    claim_numbers: list[str],
+    decision: str,
+    chosen: str | None,
+) -> None:
+    row = {
+        "recommendation_id": store(loader_connection, claim_numbers[0]),
+        "claim_number": claim_numbers[0],
+        "decision": decision,
+        "chosen_decision": chosen,
+        "approver": "Test Adjuster",
+    }
+
+    assert error_code(loader_connection, domain_tables["approvals"], row) in (
+        CHECK_VIOLATED
+    )
+
+
+@pytest.mark.parametrize("source", ["rule", "model"])
+@pytest.mark.parametrize(
     ("outcome", "payable_amount"), [("recommend_pay", 0), ("recommend_deny", 500)]
 )
 def test_table_refuses_an_amount_that_contradicts_the_outcome(
     loader_connection: Connection,
     domain_tables: dict[str, Table],
     claim_numbers: list[str],
+    source: str,
     outcome: str,
     payable_amount: int,
 ) -> None:
@@ -328,10 +436,14 @@ def test_table_refuses_an_amount_that_contradicts_the_outcome(
         "case_id": "C01",
         "claim_number": claim_numbers[0],
         "policy_number": 1,
-        "outcome": outcome,
-        "reason": "covered",
-        "payable_amount": payable_amount,
-        "rationale": "test",
+        "rule_outcome": "recommend_deny",
+        "rule_reason": "below_deductible",
+        "rule_explanation": "test",
+        "model_outcome": "recommend_deny",
+        "model_reason": "below_deductible",
+        "model_explanation": "test",
+        f"{source}_outcome": outcome,
+        f"{source}_payable_amount": payable_amount,
     }
 
     assert error_code(loader_connection, domain_tables["recommendations"], row) in (
@@ -343,8 +455,9 @@ def test_table_refuses_an_amount_that_contradicts_the_outcome(
 
 # Harmless even if a grant were wrong: each statement matches no row.
 NO_ROW_APPROVAL = (
-    "INSERT INTO approvals (recommendation_id, claim_number, decision, approver) "
-    "SELECT 0, '', 'approved', '' FROM DUAL WHERE 1 = 0"
+    "INSERT INTO approvals "
+    "(recommendation_id, claim_number, decision, chosen_decision, approver) "
+    "SELECT 0, '', 'approved', 'rule', '' FROM DUAL WHERE 1 = 0"
 )
 NO_ROW_WRITE_BACK = (
     "INSERT INTO write_backs (approval_id, claim_number) "
@@ -352,8 +465,10 @@ NO_ROW_WRITE_BACK = (
 )
 NO_ROW_RECOMMENDATION = (
     "INSERT INTO recommendations "
-    "(run_id, case_id, claim_number, policy_number, outcome, reason, rationale) "
-    "SELECT '', '', '', 0, 'recommend_deny', '', '' FROM DUAL WHERE 1 = 0"
+    "(run_id, case_id, claim_number, policy_number, rule_outcome, rule_reason, "
+    "rule_explanation, model_outcome, model_reason, model_explanation) "
+    "SELECT '', '', '', 0, 'recommend_deny', '', '', 'recommend_deny', '', '' "
+    "FROM DUAL WHERE 1 = 0"
 )
 
 

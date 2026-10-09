@@ -1,0 +1,51 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You check two explanations written for a claims adjuster. You are given the facts of a case, two decisions about it and the explanation of each.\n\nSet \"grounded\" to false only if an explanation states a specific value (an amount, a date, a count or a policy number) that contradicts the facts, or that cannot be obtained from the facts by simple arithmetic or by counting. Do not judge whether either decision is correct. Do not object to the two decisions being different from each other. Wording, style and length are not your concern.\n\nWhen \"grounded\" is false, quote the unsupported statement in \"problem\". Otherwise leave \"problem\" empty. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00883\",\n        \"policy_number\": 987524,\n        \"incident_date\": \"2015-02-22\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"incident_severity\": \"Minor Damage\",\n        \"injury_claim\": \"5200\",\n        \"property_claim\": \"10400\",\n        \"vehicle_claim\": \"41600\",\n        \"total_claim_amount\": \"57200\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 987524,\n        \"total_amount\": \"41600\"\n      },\n      \"police_report\": null\n    },\n    \"policy\": {\n      \"policy_number\": 987524,\n      \"policy_start_date\": \"2000-04-22\",\n      \"policy_deductible\": 500\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"2003-02-03\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"93720.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"24360.00\",\n      \"typical_amount\": \"43360.00\",\n      \"high_amount\": \"61650.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"56700\"\n  },\n  \"rule_explanation\": \"The claim form reports a Multi-vehicle Collision on 2015-02-22 with Minor Damage and a total claim amount of 57200, and the policy 987524 was in force, having started on 2000-04-22. Applying the fixed rule, the claim is covered and the payable amount is the total claim amount of 57200 reduced by the policy deductible of 500.\",\n  \"model_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"56700\"\n  },\n  \"model_explanation\": \"The model relied on the same claim form values, including the vehicle claim of 41600, which matches the repair estimate total amount of 41600 for policy 987524. It also noted the repair cost reference range for this kind of incident, from a low of 24360.00 to a high of 61650.00 with a typical amount of 43360.00, and found the claim covered, paying the total claim amount of 57200 less the policy deductible of 500.\"\n}"
+      }
+    ],
+    "max_tokens": 300,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's finding on whether the explanations stick to the facts.",
+      "properties": {
+        "grounded": {
+          "description": "False only if an explanation states an unsupported value",
+          "title": "Grounded",
+          "type": "boolean"
+        },
+        "problem": {
+          "description": "The unsupported statement, quoted; empty when grounded",
+          "title": "Problem",
+          "type": "string"
+        }
+      },
+      "required": [
+        "grounded",
+        "problem"
+      ],
+      "title": "Verdict",
+      "type": "object"
+    },
+    "schema_name": "review",
+    "temperature": 0.0,
+    "seed": 0
+  },
+  "response": {
+    "content": "{\"grounded\": true, \"problem\": \"\"}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 851,
+      "completion_tokens": 13,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 4.570801499998197
+  }
+}

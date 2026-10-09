@@ -1,0 +1,53 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You write two short explanations for a claims adjuster who must choose between two decisions on the same claim. One decision was produced by fixed rules, the other by an AI model working independently on the same facts. For each decision, say in one to three sentences which facts it rests on, quoting the values. Do not say which decision is better. Do not state any amount, date, count or number that is not in the input. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00666\",\n        \"policy_number\": 437573,\n        \"incident_date\": \"2015-02-09\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"incident_severity\": \"Minor Damage\",\n        \"injury_claim\": \"17360\",\n        \"property_claim\": \"8680\",\n        \"vehicle_claim\": \"52080\",\n        \"total_claim_amount\": \"78120\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 437573,\n        \"total_amount\": \"52080\"\n      },\n      \"police_report\": null\n    },\n    \"policy\": {\n      \"policy_number\": 437573,\n      \"policy_start_date\": \"2007-05-09\",\n      \"policy_deductible\": 2000\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"2007-05-20\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"51210.00\"\n      },\n      {\n        \"incident_date\": \"2007-06-20\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"64260.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"26040.00\",\n      \"typical_amount\": \"44880.00\",\n      \"high_amount\": \"67590.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"76120\"\n  },\n  \"model_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"76120\"\n  }\n}"
+      }
+    ],
+    "max_tokens": 600,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's explanation of each of the two decisions.",
+      "properties": {
+        "rule_explanation": {
+          "description": "Why the fixed rules reached their decision",
+          "minLength": 1,
+          "title": "Rule Explanation",
+          "type": "string"
+        },
+        "model_explanation": {
+          "description": "Why the AI model reached its decision",
+          "minLength": 1,
+          "title": "Model Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_explanation",
+        "model_explanation"
+      ],
+      "title": "Explanations",
+      "type": "object"
+    },
+    "schema_name": "explanations",
+    "temperature": 0.0,
+    "seed": 0
+  },
+  "response": {
+    "content": "{\n  \"rule_explanation\": \"The claim form reports a Single Vehicle Collision on 2015-02-09 with Minor Damage and a total claim amount of 78120, and the policy 437573 was in force with a deductible of 2000, so the covered amount is 78120 minus 2000, which is 76120.\",\n  \"model_explanation\": \"The model relied on the same facts: the claim form's total claim amount of 78120 for the incident on 2015-02-09, the matching repair estimate of 52080, and the policy deductible of 2000, yielding a payable amount of 76120.\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 631,
+      "completion_tokens": 148,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 3.4741184000013163
+  }
+}

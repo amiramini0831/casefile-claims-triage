@@ -1,0 +1,53 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You write two short explanations for a claims adjuster who must choose between two decisions on the same claim. One decision was produced by fixed rules, the other by an AI model working independently on the same facts. For each decision, say in one to three sentences which facts it rests on, quoting the values. Do not say which decision is better. Do not state any amount, date, count or number that is not in the input. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00501\",\n        \"policy_number\": 326180,\n        \"incident_date\": \"2014-03-11\",\n        \"incident_type\": \"Vehicle Theft\",\n        \"incident_severity\": \"Trivial Damage\",\n        \"injury_claim\": \"540\",\n        \"property_claim\": \"1080\",\n        \"vehicle_claim\": \"4320\",\n        \"total_claim_amount\": \"5940\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 326180,\n        \"total_amount\": \"4320\"\n      },\n      \"police_report\": {\n        \"policy_number\": 326180,\n        \"incident_date\": \"2014-03-11\"\n      }\n    },\n    \"policy\": {\n      \"policy_number\": 326180,\n      \"policy_start_date\": \"2014-04-30\",\n      \"policy_deductible\": 2000\n    },\n    \"prior_claims\": [],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"2100.00\",\n      \"typical_amount\": \"3850.00\",\n      \"high_amount\": \"5670.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_deny\",\n    \"reason\": \"incident_outside_policy_period\",\n    \"payable_amount\": null\n  },\n  \"model_decision\": {\n    \"outcome\": \"recommend_deny\",\n    \"reason\": \"incident_outside_policy_period\",\n    \"payable_amount\": null\n  }\n}"
+      }
+    ],
+    "max_tokens": 600,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's explanation of each of the two decisions.",
+      "properties": {
+        "rule_explanation": {
+          "description": "Why the fixed rules reached their decision",
+          "minLength": 1,
+          "title": "Rule Explanation",
+          "type": "string"
+        },
+        "model_explanation": {
+          "description": "Why the AI model reached its decision",
+          "minLength": 1,
+          "title": "Model Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_explanation",
+        "model_explanation"
+      ],
+      "title": "Explanations",
+      "type": "object"
+    },
+    "schema_name": "explanations",
+    "temperature": 0.0,
+    "seed": 0
+  },
+  "response": {
+    "content": "{\n  \"rule_explanation\": \"The rule decision rests on the claim form's incident date of 2014-03-11 compared against the policy start date of 2014-04-30 for policy 326180, finding the incident occurred before the policy period began.\",\n  \"model_explanation\": \"The model decision rests on the same facts: the claim form's incident date of 2014-03-11 falls before the policy start date of 2014-04-30 on policy 326180, placing the incident outside the policy period.\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 574,
+      "completion_tokens": 124,
+      "reasoning_tokens": 6
+    },
+    "latency_seconds": 9.811978499998077
+  }
+}

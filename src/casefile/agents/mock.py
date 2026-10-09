@@ -91,8 +91,13 @@ class MockInvestigator(_MockAgent):
         decision = assess(state.extraction, self._lookup)
         return Recommended(
             cost=MOCK_CALL_COST,
+            # The stand-in has no opinion of its own: its "model" decision is
+            # the rules' decision.
             recommendation=Recommendation(
-                decision=decision, rationale=f"Rule applied: {decision.reason}."
+                rule_decision=decision,
+                model_decision=decision,
+                rule_explanation=f"Rule applied: {decision.reason}.",
+                model_explanation="Stand-in agent; no model was consulted.",
             ),
         )
 
@@ -113,7 +118,7 @@ class MockReviewer(_MockAgent):
                 target="extractor",
                 reason="The claimed amounts do not add up to the claimed total.",
             )
-        if recommendation.decision != assess(extraction, self._lookup):
+        if recommendation.rule_decision != assess(extraction, self._lookup):
             return SentBack(
                 cost=MOCK_CALL_COST,
                 target="investigator",

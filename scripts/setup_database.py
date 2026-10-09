@@ -127,8 +127,9 @@ FORBIDDEN: dict[str, tuple[str, ...]] = {
         "SELECT 1 FROM {domain}.approvals LIMIT 1",
     ),
     "writer": (
-        "INSERT INTO approvals (recommendation_id, claim_number, decision, approver) "
-        "SELECT 0, '', 'approved', '' FROM DUAL WHERE 1 = 0",
+        "INSERT INTO approvals "
+        "(recommendation_id, claim_number, decision, chosen_decision, approver) "
+        "SELECT 0, '', 'approved', 'rule', '' FROM DUAL WHERE 1 = 0",
         "DELETE FROM write_backs WHERE 1 = 0",
         "SELECT 1 FROM claims LIMIT 1",
     ),
@@ -136,8 +137,10 @@ FORBIDDEN: dict[str, tuple[str, ...]] = {
         "INSERT INTO write_backs (approval_id, claim_number) "
         "SELECT 0, '' FROM DUAL WHERE 1 = 0",
         "INSERT INTO recommendations "
-        "(run_id, case_id, claim_number, policy_number, outcome, reason, rationale) "
-        "SELECT '', '', '', 0, 'recommend_deny', '', '' FROM DUAL WHERE 1 = 0",
+        "(run_id, case_id, claim_number, policy_number, rule_outcome, rule_reason, "
+        "rule_explanation, model_outcome, model_reason, model_explanation) "
+        "SELECT '', '', '', 0, 'recommend_deny', '', '', 'recommend_deny', '', '' "
+        "FROM DUAL WHERE 1 = 0",
         "DELETE FROM approvals WHERE 1 = 0",
     ),
 }

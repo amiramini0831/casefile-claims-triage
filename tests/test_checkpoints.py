@@ -250,7 +250,7 @@ def test_completed_run_is_submitted_for_approval(
     assert recommendation_id == again
     row = loader_connection.execute(
         text(
-            "SELECT case_id, claim_number, outcome, payable_amount "
+            "SELECT case_id, claim_number, rule_outcome, rule_payable_amount "
             "FROM recommendations WHERE recommendation_id = :id"
         ),
         {"id": recommendation_id},

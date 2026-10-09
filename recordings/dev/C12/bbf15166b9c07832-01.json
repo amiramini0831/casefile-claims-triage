@@ -1,0 +1,54 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You write two short explanations for a claims adjuster who must choose between two decisions on the same claim. One decision was produced by fixed rules, the other by an AI model working independently on the same facts. For each decision, say in one to three sentences which facts it rests on, quoting the values. Do not say which decision is better. Do not state any amount, date, count or number that is not in the input. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00118\",\n        \"policy_number\": 594783,\n        \"incident_date\": \"2015-01-08\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"incident_severity\": \"Major Damage\",\n        \"injury_claim\": \"8280\",\n        \"property_claim\": \"8280\",\n        \"vehicle_claim\": \"28980\",\n        \"total_claim_amount\": \"45540\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 594783,\n        \"total_amount\": \"28980\"\n      },\n      \"police_report\": {\n        \"policy_number\": 594783,\n        \"incident_date\": \"2015-01-08\"\n      }\n    },\n    \"policy\": {\n      \"policy_number\": 594783,\n      \"policy_start_date\": \"2005-02-08\",\n      \"policy_deductible\": 500\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"2005-03-05\",\n        \"incident_type\": \"Vehicle Theft\",\n        \"total_claim_amount\": \"5760.00\"\n      },\n      {\n        \"incident_date\": \"2005-08-16\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"90860.00\"\n      },\n      {\n        \"incident_date\": \"2011-10-16\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"77990.00\"\n      },\n      {\n        \"incident_date\": \"2013-03-20\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"60840.00\"\n      },\n      {\n        \"incident_date\": \"2014-06-16\",\n        \"incident_type\": \"Vehicle Theft\",\n        \"total_claim_amount\": \"6890.00\"\n      },\n      {\n        \"incident_date\": \"2014-12-28\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"63910.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"29760.00\",\n      \"typical_amount\": \"47360.00\",\n      \"high_amount\": \"69210.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"refer_to_adjuster\",\n    \"reason\": \"frequent_prior_claims\",\n    \"payable_amount\": null\n  },\n  \"model_decision\": {\n    \"outcome\": \"refer_to_adjuster\",\n    \"reason\": \"frequent_prior_claims\",\n    \"payable_amount\": null\n  }\n}"
+      }
+    ],
+    "max_tokens": 600,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's explanation of each of the two decisions.",
+      "properties": {
+        "rule_explanation": {
+          "description": "Why the fixed rules reached their decision",
+          "minLength": 1,
+          "title": "Rule Explanation",
+          "type": "string"
+        },
+        "model_explanation": {
+          "description": "Why the AI model reached its decision",
+          "minLength": 1,
+          "title": "Model Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_explanation",
+        "model_explanation"
+      ],
+      "title": "Explanations",
+      "type": "object"
+    },
+    "schema_name": "explanations",
+    "temperature": 0.0,
+    "seed": 0,
+    "reasoning_effort": null
+  },
+  "response": {
+    "content": "{\n  \"rule_explanation\": \"The rule decision refers the claim to an adjuster because the policy has frequent prior claims: six earlier claims on policy 594783, including a Single Vehicle Collision on 2013-03-20 with total_claim_amount 60840.00 and a Multi-vehicle Collision on 2014-12-28 with total_claim_amount 63910.00.\",\n  \"model_explanation\": \"The model decision also refers the claim to an adjuster based on frequent prior claims, resting on the same history of six earlier claims on policy 594783, such as the Single Vehicle Collision on 2013-03-20 with total_claim_amount 60840.00 and the Multi-vehicle Collision on 2014-12-28 with total_claim_amount 63910.00.\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 823,
+      "completion_tokens": 178,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 24.80526370000007
+  }
+}

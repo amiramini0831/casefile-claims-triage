@@ -1,0 +1,51 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You check two explanations written for a claims adjuster. You are given the facts of a case, two decisions about it and the explanation of each.\n\nSet \"grounded\" to false only if an explanation states a specific value (an amount, a date, a count or a policy number) that contradicts the facts, or that cannot be obtained from the facts by simple arithmetic or by counting. Do not judge whether either decision is correct. Do not object to the two decisions being different from each other. Wording, style and length are not your concern.\n\nWhen \"grounded\" is false, quote the unsupported statement in \"problem\". Otherwise leave \"problem\" empty. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00180\",\n        \"policy_number\": 828890,\n        \"incident_date\": \"2015-01-11\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"incident_severity\": \"Total Loss\",\n        \"injury_claim\": \"5550\",\n        \"property_claim\": \"11100\",\n        \"vehicle_claim\": \"38850\",\n        \"total_claim_amount\": \"55500\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 828890,\n        \"total_amount\": \"38850\"\n      },\n      \"police_report\": null\n    },\n    \"policy\": {\n      \"policy_number\": 828890,\n      \"policy_start_date\": \"1985-02-11\",\n      \"policy_deductible\": 2000\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"1990-05-28\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"45270.00\"\n      },\n      {\n        \"incident_date\": \"1990-10-05\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"41130.00\"\n      },\n      {\n        \"incident_date\": \"1991-06-26\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"84920.00\"\n      },\n      {\n        \"incident_date\": \"1992-06-09\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"59670.00\"\n      },\n      {\n        \"incident_date\": \"2009-07-16\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"90240.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"28800.00\",\n      \"typical_amount\": \"46000.00\",\n      \"high_amount\": \"64480.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"53500\"\n  },\n  \"rule_explanation\": \"The fixed-rule decision rests on the claim form's total claim amount of 55500 and the policy deductible of 2000, yielding a payable amount of 53500. It treats the claim as covered because the claim form cites policy 828890, which exists with a start date of 1985-02-11, before the incident date of 2015-01-11.\",\n  \"model_decision\": {\n    \"outcome\": \"recommend_pay\",\n    \"reason\": \"covered\",\n    \"payable_amount\": \"53500\"\n  },\n  \"model_explanation\": \"The AI model's decision rests on the same claim form total of 55500 and the policy deductible of 2000, producing a payable amount of 53500. It also considers the repair estimate total of 38850, which falls within the usual repair cost range of 28800.00 to 64480.00 with a typical amount of 46000.00, supporting coverage of the vehicle claim.\"\n}"
+      }
+    ],
+    "max_tokens": 300,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's finding on whether the explanations stick to the facts.",
+      "properties": {
+        "grounded": {
+          "description": "False only if an explanation states an unsupported value",
+          "title": "Grounded",
+          "type": "boolean"
+        },
+        "problem": {
+          "description": "The unsupported statement, quoted; empty when grounded",
+          "title": "Problem",
+          "type": "string"
+        }
+      },
+      "required": [
+        "grounded",
+        "problem"
+      ],
+      "title": "Verdict",
+      "type": "object"
+    },
+    "schema_name": "review",
+    "temperature": 0.0,
+    "seed": 0
+  },
+  "response": {
+    "content": "{\"grounded\": true, \"problem\": \"\"}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 988,
+      "completion_tokens": 13,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 1.2958260999985214
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "model": "z-ai/glm-5.3",
+  "request": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You write two short explanations for a claims adjuster who must choose between two decisions on the same claim. One decision was produced by fixed rules, the other by an AI model working independently on the same facts. For each decision, say in one to three sentences which facts it rests on, quoting the values. Do not say which decision is better. Do not state any amount, date, count or number that is not in the input. Answer with JSON only.\n\nThe facts are JSON with these parts:\n- documents.claim_form: what the claim form states.\n- documents.repair_estimate: what the repair estimate states, or null when the file contains no repair estimate.\n- documents.police_report: what the police report states, or null when there is none.\n- policy: the policy whose number is on the claim form, or null when no such policy exists.\n- prior_claims: the earlier claims on that policy.\n- repair_cost_reference: the usual range of vehicle repair cost for this kind of incident, or null when there is none."
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"facts\": {\n    \"documents\": {\n      \"claim_form\": {\n        \"claim_number\": \"CLM-2015-00038\",\n        \"policy_number\": 608443,\n        \"incident_date\": \"2015-01-03\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"incident_severity\": \"Minor Damage\",\n        \"injury_claim\": \"7980\",\n        \"property_claim\": \"7980\",\n        \"vehicle_claim\": \"71820\",\n        \"total_claim_amount\": \"87780\"\n      },\n      \"repair_estimate\": {\n        \"policy_number\": 608443,\n        \"total_amount\": \"71820\"\n      },\n      \"police_report\": null\n    },\n    \"policy\": {\n      \"policy_number\": 608443,\n      \"policy_start_date\": \"1993-06-03\",\n      \"policy_deductible\": 2000\n    },\n    \"prior_claims\": [\n      {\n        \"incident_date\": \"2001-12-21\",\n        \"incident_type\": \"Multi-vehicle Collision\",\n        \"total_claim_amount\": \"19080.00\"\n      },\n      {\n        \"incident_date\": \"2008-10-01\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"90530.00\"\n      },\n      {\n        \"incident_date\": \"2010-02-13\",\n        \"incident_type\": \"Vehicle Theft\",\n        \"total_claim_amount\": \"5760.00\"\n      },\n      {\n        \"incident_date\": \"2013-08-27\",\n        \"incident_type\": \"Single Vehicle Collision\",\n        \"total_claim_amount\": \"62640.00\"\n      }\n    ],\n    \"repair_cost_reference\": {\n      \"low_amount\": \"26040.00\",\n      \"typical_amount\": \"44880.00\",\n      \"high_amount\": \"67590.00\"\n    }\n  },\n  \"rule_decision\": {\n    \"outcome\": \"refer_to_adjuster\",\n    \"reason\": \"amount_above_reference\",\n    \"payable_amount\": null\n  },\n  \"model_decision\": {\n    \"outcome\": \"refer_to_adjuster\",\n    \"reason\": \"amount_above_reference\",\n    \"payable_amount\": null\n  }\n}"
+      }
+    ],
+    "max_tokens": 600,
+    "json_schema": {
+      "additionalProperties": false,
+      "description": "The model's explanation of each of the two decisions.",
+      "properties": {
+        "rule_explanation": {
+          "description": "Why the fixed rules reached their decision",
+          "minLength": 1,
+          "title": "Rule Explanation",
+          "type": "string"
+        },
+        "model_explanation": {
+          "description": "Why the AI model reached its decision",
+          "minLength": 1,
+          "title": "Model Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_explanation",
+        "model_explanation"
+      ],
+      "title": "Explanations",
+      "type": "object"
+    },
+    "schema_name": "explanations",
+    "temperature": 0.0,
+    "seed": 0
+  },
+  "response": {
+    "content": "{\n  \"rule_explanation\": \"The vehicle claim of 71820 exceeds the high end of the usual repair cost range, which is 67590.00, so the claim is referred to an adjuster.\",\n  \"model_explanation\": \"The vehicle claim of 71820 is above the usual high repair cost of 67590.00, so the claim is referred to an adjuster.\"\n}",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 713,
+      "completion_tokens": 89,
+      "reasoning_tokens": 0
+    },
+    "latency_seconds": 2.71477909999885
+  }
+}
