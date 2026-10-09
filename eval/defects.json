@@ -1,0 +1,95 @@
+{
+  "seed": 20150515,
+  "defects": [
+    {
+      "case_id": "C15",
+      "claim_id": "CLM-2015-00011",
+      "defect": "amount_mismatch",
+      "document": "repair_estimate",
+      "field": "total_amount",
+      "true_value": "45200",
+      "planted_value": "63280"
+    },
+    {
+      "case_id": "C16",
+      "claim_id": "CLM-2015-00703",
+      "defect": "amount_mismatch",
+      "document": "repair_estimate",
+      "field": "total_amount",
+      "true_value": "43330",
+      "planted_value": "54160"
+    },
+    {
+      "case_id": "C17",
+      "claim_id": "CLM-2015-00043",
+      "defect": "date_mismatch",
+      "document": "police_report",
+      "field": "incident_date",
+      "true_value": "2015-01-03",
+      "planted_value": "2014-12-31"
+    },
+    {
+      "case_id": "C18",
+      "claim_id": "CLM-2015-00127",
+      "defect": "date_mismatch",
+      "document": "police_report",
+      "field": "incident_date",
+      "true_value": "2015-01-08",
+      "planted_value": "2015-01-04"
+    },
+    {
+      "case_id": "C19",
+      "claim_id": "CLM-2015-00334",
+      "defect": "missing_document",
+      "document": "repair_estimate",
+      "field": "document",
+      "true_value": "present",
+      "planted_value": "absent"
+    },
+    {
+      "case_id": "C20",
+      "claim_id": "CLM-2015-00645",
+      "defect": "missing_document",
+      "document": "repair_estimate",
+      "field": "document",
+      "true_value": "present",
+      "planted_value": "absent"
+    },
+    {
+      "case_id": "C21",
+      "claim_id": "CLM-2015-00441",
+      "defect": "wrong_policy_number",
+      "document": "all",
+      "field": "policy_number",
+      "true_value": "369226",
+      "planted_value": "493867"
+    },
+    {
+      "case_id": "C22",
+      "claim_id": "CLM-2015-00665",
+      "defect": "wrong_policy_number",
+      "document": "all",
+      "field": "policy_number",
+      "true_value": "405533",
+      "planted_value": "932146"
+    },
+    {
+      "case_id": "C23",
+      "claim_id": "CLM-2015-00129",
+      "defect": "incident_outside_coverage",
+      "document": "all",
+      "field": "incident_date",
+      "true_value": "2015-01-08",
+      "planted_value": "1996-09-11"
+    },
+    {
+      "case_id": "C24",
+      "claim_id": "CLM-2015-00393",
+      "defect": "incident_outside_coverage",
+      "document": "all",
+      "field": "incident_date",
+      "true_value": "2015-01-24",
+      "planted_value": "2006-10-05"
+    }
+  ]
+}

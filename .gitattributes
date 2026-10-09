@@ -1,3 +1,6 @@
 # Keep LF line endings on every platform, so that recorded file hashes
 # (for example of eval/cases.yaml) stay valid after a checkout on Windows.
 * text=auto eol=lf
+
+# Generated documents are compared byte for byte; never let git rewrite them.
+*.pdf binary

@@ -1,0 +1,39 @@
+<h1>{{ insurer }}</h1>
+<h2>Automobile Claim Form</h2>
+<p><b>Claim number:</b> {{ doc.claim_number }}<br>
+<b>Date filed:</b> {{ doc.date_filed | long_date }}</p>
+
+<h3>Policyholder</h3>
+<p><b>Name:</b> {{ doc.policyholder_name }}<br>
+<b>Age:</b> {{ doc.policyholder_age }}<br>
+<b>Policy number:</b> {{ doc.policy_number }}<br>
+<b>Policy state:</b> {{ doc.policy_state }}</p>
+
+<h3>Insured vehicle</h3>
+<p><b>Vehicle:</b> {{ doc.vehicle }}</p>
+
+<h3>Incident</h3>
+<p><b>Date of incident:</b> {{ doc.incident_date | long_date }}<br>
+<b>Time of incident:</b> {{ doc.incident_time }}<br>
+<b>Type of incident:</b> {{ doc.incident_type }}<br>
+<b>Type of collision:</b> {{ doc.collision_type }}<br>
+<b>Severity of damage:</b> {{ doc.incident_severity }}<br>
+<b>Location:</b> {{ doc.incident_location }}<br>
+<b>Authorities contacted:</b> {{ doc.authorities_contacted }}<br>
+<b>Vehicles involved:</b> {{ doc.vehicles_involved }}<br>
+<b>Witnesses:</b> {{ doc.witnesses }}<br>
+<b>Police report available:</b> {{ doc.police_report }}</p>
+
+<h3>Description</h3>
+<p>{{ doc.description }}</p>
+
+<h3>Amount claimed (USD)</h3>
+<table width="60%" border="1">
+  <thead><tr><th width="60%">Item</th><th width="40%">Amount</th></tr></thead>
+  <tbody>
+    <tr><td>Injury</td><td align="right">{{ doc.injury_claim | money }}</td></tr>
+    <tr><td>Property</td><td align="right">{{ doc.property_claim | money }}</td></tr>
+    <tr><td>Vehicle</td><td align="right">{{ doc.vehicle_claim | money }}</td></tr>
+    <tr><td><b>Total claimed</b></td><td align="right"><b>{{ doc.total_claim_amount | money }}</b></td></tr>
+  </tbody>
+</table>

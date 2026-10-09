@@ -1,0 +1,21 @@
+<h1>{{ doc.shop_name }}</h1>
+<h2>Vehicle Repair Estimate</h2>
+<p><b>Estimate number:</b> {{ doc.estimate_number }}<br>
+<b>Estimate date:</b> {{ doc.estimate_date | iso_date }}<br>
+<b>Customer:</b> {{ doc.customer_name }}<br>
+<b>Vehicle:</b> {{ doc.vehicle }}<br>
+<b>Insurer:</b> {{ insurer }}<br>
+<b>Claim number:</b> {{ doc.claim_number }}<br>
+<b>Policy number:</b> {{ doc.policy_number }}</p>
+
+<h3>Estimated cost of repair (USD)</h3>
+<table width="100%" border="1">
+  <thead><tr><th width="55%">Description</th><th width="20%">Type</th><th width="25%">Amount</th></tr></thead>
+  <tbody>
+{% for item in doc.items %}
+    <tr><td>{{ item.description }}</td><td>{{ item.category }}</td><td align="right">{{ item.amount | money }}</td></tr>
+{% endfor %}
+    <tr><td><b>Estimate total</b></td><td></td><td align="right"><b>{{ doc.total_amount | money }}</b></td></tr>
+  </tbody>
+</table>
+<p>This estimate is based on a visual inspection. Hidden damage found during repair may change the final cost.</p>

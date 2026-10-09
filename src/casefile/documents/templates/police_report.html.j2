@@ -1,0 +1,21 @@
+<h1>{{ doc.agency }}</h1>
+<h2>Incident Report</h2>
+<p><b>Report number:</b> {{ doc.report_number }}<br>
+<b>Report date:</b> {{ doc.report_date | short_date }}</p>
+
+<h3>Incident</h3>
+<p><b>Date of incident:</b> {{ doc.incident_date | short_date }}<br>
+<b>Time of incident:</b> {{ doc.incident_time }}<br>
+<b>Location:</b> {{ doc.incident_location }}<br>
+<b>Type of incident:</b> {{ doc.incident_type }}<br>
+<b>Type of collision:</b> {{ doc.collision_type }}<br>
+<b>Vehicles involved:</b> {{ doc.vehicles_involved }}<br>
+<b>Witnesses:</b> {{ doc.witnesses }}</p>
+
+<h3>Driver and vehicle</h3>
+<p><b>Driver:</b> {{ doc.driver_name }}<br>
+<b>Vehicle:</b> {{ doc.vehicle }}<br>
+<b>Insurance policy number:</b> {{ doc.policy_number }}</p>
+
+<h3>Narrative</h3>
+<p>{{ doc.narrative }}</p>
